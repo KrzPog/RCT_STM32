@@ -4,7 +4,10 @@
         "options": {
             "shell": {
                 "executable": "cmd.exe",
-                "args": ["/d", "/c"]
+                "args": [
+                    "/d",
+                    "/c"
+                ]
             }
         }
     },
@@ -36,7 +39,7 @@
                 "CubeProg: Flash project (SWD)",
             ]
         },
-                {
+        {
             "type": "cmake",
             "label": "CMake: clean rebuild",
             "command": "cleanRebuild",
@@ -52,7 +55,25 @@
             "type": "shell",
             "label": "CubeProg: List all available communication interfaces",
             "command": "STM32_Programmer_CLI",
-            "args": ["--list"],
+            "args": [
+                "--list"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "CubeProg: Serial Wire Viewer",
+            "command": "STM32_Programmer_CLI",
+            "args": [
+                "--connect",
+                "port=swd",
+                "-startswv",
+                "freq=96",
+                "portnumber=0"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },

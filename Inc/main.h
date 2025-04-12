@@ -57,7 +57,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define USB_BUFFER_RX 64
 #define IWDG_RELOAD 999
+#define USB_BUFFER_TX 64
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
