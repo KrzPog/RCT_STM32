@@ -58,12 +58,22 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define USB_BUFFER_RX 64
-#define IWDG_RELOAD 999
 #define USB_BUFFER_TX 64
+#define IWDG_RELOAD 999
+#define TIM11_PRESCALER 95
+#define TIM11_PERIOD 49
+#define BLUETOOTH_DATA_BPS 9600
+#define BLUETOOTH_COMMAND_BPS 38400
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
 #define BLACKPILL_KEY_GPIO_Port GPIOA
+#define BLUETOOTH_CE_CLR_Pin GPIO_PIN_8
+#define BLUETOOTH_CE_CLR_GPIO_Port GPIOA
+#define BLUETOOTH_TX_Pin GPIO_PIN_9
+#define BLUETOOTH_TX_GPIO_Port GPIOA
+#define BLUETOOTH_RX_Pin GPIO_PIN_10
+#define BLUETOOTH_RX_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

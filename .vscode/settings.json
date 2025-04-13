@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "mb.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "mbport.h": "c",
+        "cstdlib": "c"
+    }
+}
