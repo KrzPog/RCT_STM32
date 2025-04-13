@@ -53,6 +53,7 @@ target_link_directories(${EXECUTABLE_NAME} PRIVATE
 # Add sources to executable
 target_sources(${EXECUTABLE_NAME} PRIVATE
     # Add user sources here
+    ${CMAKE_CURRENT_LIST_DIR}/Src/ExternalModules/bluetooth_XM_15B.c
 )
 
 # Add include paths
