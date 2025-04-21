@@ -3,6 +3,10 @@
         "mb.h": "c",
         "stm32f4xx_hal.h": "c",
         "mbport.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "usbd_cdc_if.h": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "bluetooth_xm_15b.h": "c"
     }
 }

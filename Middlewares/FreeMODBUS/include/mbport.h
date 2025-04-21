@@ -75,7 +75,9 @@ void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable);
 
 BOOL xMBPortSerialGetByte(CHAR *pucByte);
 
-BOOL xMBPortSerialPutByte(CHAR ucByte);
+BOOL xMBPortSerialPutByte(CHAR *ucByte);
+
+BOOL xMBPortSerialPutBytes(CHAR *ucByte, USHORT usSize);
 
 /* ----------------------- Timers functions ---------------------------------*/
 BOOL xMBPortTimersInit(USHORT usTimeOut50us, void *timer);

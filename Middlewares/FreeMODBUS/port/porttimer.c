@@ -33,18 +33,6 @@ static uint16_t counter = 0; // timer reloads every 50us, but we need 1750us
 static uint16_t timeout = 0;
 
 /* ----------------------- Start implementation -----------------------------*/
-BOOL xMBPortTimersInit(USHORT usTimeOut50us, void *timer)
-{
-    hal_tim = (TIM_HandleTypeDef *)timer;
-    timeout = usTimeOut50us;
-    HAL_TIM_Base_Start_IT(hal_tim);
-    return TRUE;
-}
-
-void xMBPortTimersClose(void)
-{
-    HAL_TIM_Base_Stop_IT(hal_tim);
-}
 
 void USR_TIM_MB_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -55,15 +43,28 @@ void USR_TIM_MB_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
 }
 
+BOOL xMBPortTimersInit(USHORT usTimeOut50us, void *timer)
+{
+    hal_tim = (TIM_HandleTypeDef *)timer;
+    timeout = usTimeOut50us;
+    HAL_TIM_RegisterCallback(hal_tim, HAL_TIM_PERIOD_ELAPSED_CB_ID, USR_TIM_MB_PeriodElapsedCallback);
+    return TRUE;
+}
+
+void xMBPortTimersClose(void)
+{
+    HAL_TIM_UnRegisterCallback(hal_tim, HAL_TIM_PERIOD_ELAPSED_CB_ID);
+}
+
 inline void vMBPortTimersEnable()
 {
-
-    HAL_TIM_RegisterCallback(hal_tim, HAL_TIM_PERIOD_ELAPSED_CB_ID, USR_TIM_MB_PeriodElapsedCallback);
+    counter = 0;
+    HAL_TIM_Base_Start_IT(hal_tim);
 }
 
 inline void vMBPortTimersDisable()
 {
-    HAL_TIM_UnRegisterCallback(hal_tim, HAL_TIM_PERIOD_ELAPSED_CB_ID);
+    HAL_TIM_Base_Stop_IT(hal_tim);
 }
 
 /* Create an ISR which is called whenever the timer has expired. This function

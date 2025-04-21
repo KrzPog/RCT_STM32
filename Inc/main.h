@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.h
+ * @brief          : Header for main.c file.
+ *                   This file contains the common defines of the application.
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -57,14 +57,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USB_BUFFER_RX 64
-#define USB_BUFFER_TX 64
-#define IWDG_RELOAD 999
 #define TIM11_PRESCALER 95
-#define TIM11_PERIOD 49
 #define BLUETOOTH_DATA_BPS 9600
-#define USART1_BUFFER_RX 64
-#define USART1_BUFFER_TX 64
+#define TIM11_PERIOD 49
+#define COMM_BUFFER_SIZE 64
+#define IWDG_RELOAD 999
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
@@ -78,7 +75,14 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
-#define USB_BLUETOOTH_DIRECT 0 // USB to Bluetooth direct communication
+#define COMM_MODE 0x04
+
+#define COMM_MODE_BIT_ECHO_USB_APP 0x01 // Echo every data USB->Application to USB
+#define COMM_MODE_BIT_ECHO_BT_APP 0x02  // Echo every data BT->Application to USB
+#define COMM_MODE_BIT_ECHO_APP_BT 0x04  // Echo every data Application->BT to USB
+#define COMM_MODE_BIT_FRWD_USB_BT 0x08  // Forward every data USB->BT
+
+#define MODBUS_SLAVE_ID 0x01
 
 /* USER CODE END Private defines */
 

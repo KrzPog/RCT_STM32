@@ -24,11 +24,14 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
+
+#include "main.h"
+#include "usbd_cdc_if.h"
 /* -----------------------User definitions ----------------------------------*/
 UART_HandleTypeDef *hal_uart;
 static uint8_t singleChar;
 
-// To implement in case of
+// To implement in case of half-duplex
 #define TRANSMIT
 #define RECEIVE
 
@@ -66,7 +69,7 @@ void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
     else
     {
         HAL_UART_UnRegisterCallback(hal_uart, HAL_UART_RX_COMPLETE_CB_ID);
-        HAL_UART_AbortReceive_IT(hal_uart);
+        //HAL_UART_AbortReceive_IT(hal_uart);
     }
     if (xTxEnable)
     {
@@ -77,27 +80,33 @@ void vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
     else
     {
         HAL_UART_UnRegisterCallback(hal_uart, HAL_UART_TX_COMPLETE_CB_ID);
-        HAL_UART_AbortTransmit_IT(hal_uart);
+        //HAL_UART_AbortTransmit_IT(hal_uart);
     }
 }
 
-void vMBPortSerialClose(void)
+void xMBPortSerialClose(void)
 {
     vMBPortSerialEnable(FALSE, FALSE);
 }
 
-BOOL xMBPortSerialPutByte(CHAR ucByte)
+BOOL xMBPortSerialPutByte(CHAR *ucByte)
 {
     /* Put a byte in the UARTs transmit buffer. This function is called
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
-    HAL_UART_Transmit_IT(hal_uart, (uint8_t *)&ucByte, 1);
+    HAL_UART_Transmit_IT(hal_uart, (uint8_t *)ucByte, 1);
+#if (COMM_MODE & COMM_MODE_BIT_ECHO_APP_BT)
+    CDC_Transmit_FS((uint8_t *)ucByte, 1);
+#endif
     return TRUE;
 }
 
 BOOL xMBPortSerialPutBytes(CHAR *ucByte, USHORT usSize)
 {
     HAL_UART_Transmit_IT(hal_uart, (uint8_t *)ucByte, usSize);
+#if (COMM_MODE & COMM_MODE_BIT_ECHO_APP_BT)
+    CDC_Transmit_FS((uint8_t *)ucByte, usSize);
+#endif
     return TRUE;
 }
 
@@ -107,6 +116,9 @@ BOOL xMBPortSerialGetByte(CHAR *pucByte)
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
      */
     *pucByte = singleChar;
+#if (COMM_MODE & COMM_MODE_BIT_ECHO_BT_APP)
+    CDC_Transmit_FS(&singleChar, 1);
+#endif
     HAL_UART_Receive_IT(hal_uart, &singleChar, 1);
     return TRUE;
 }

@@ -5,13 +5,14 @@
 #include "usart.h"
 #include "usbd_cdc_if.h"
 
-#if USB_BLUETOOTH_DIRECT
+#if (COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
 
 extern UART_HandleTypeDef *bt_uart;
 
-void USR_USB_UART_BT_Init(UART_HandleTypeDef *huart);
+extern uint8_t Buffer_APP_BT[COMM_BUFFER_SIZE];
 
-void USR_UART_BT_RX_Complete(UART_HandleTypeDef *huart);
+void USR_BT_INIT(UART_HandleTypeDef *huart);
+void USR_BT_RX_Complete(UART_HandleTypeDef *huart);
 
 #endif
 
