@@ -98,16 +98,16 @@ PR_BEGIN_EXTERN_C
 #define MB_FUNC_OTHER_REP_SLAVEID_ENABLED       (  1 )
 
 /*! \brief If the <em>Read Input Registers</em> function should be enabled. */
-#define MB_FUNC_READ_INPUT_ENABLED              (  0 )
+#define MB_FUNC_READ_INPUT_ENABLED              (  1 )
 
 /*! \brief If the <em>Read Holding Registers</em> function should be enabled. */
-#define MB_FUNC_READ_HOLDING_ENABLED            (  0 )
+#define MB_FUNC_READ_HOLDING_ENABLED            (  1 )
 
 /*! \brief If the <em>Write Single Register</em> function should be enabled. */
-#define MB_FUNC_WRITE_HOLDING_ENABLED           (  0 )
+#define MB_FUNC_WRITE_HOLDING_ENABLED           (  1 )
 
 /*! \brief If the <em>Write Multiple registers</em> function should be enabled. */
-#define MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED  (  0 )
+#define MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED  (  1 )
 
 /*! \brief If the <em>Read Coils</em> function should be enabled. */
 #define MB_FUNC_READ_COILS_ENABLED              (  0 )
@@ -122,7 +122,7 @@ PR_BEGIN_EXTERN_C
 #define MB_FUNC_READ_DISCRETE_INPUTS_ENABLED    (  0 )
 
 /*! \brief If the <em>Read/Write Multiple Registers</em> function should be enabled. */
-#define MB_FUNC_READWRITE_HOLDING_ENABLED       (  0 )
+#define MB_FUNC_READWRITE_HOLDING_ENABLED       (  1 )
 
 /*! @} */
 #ifdef __cplusplus

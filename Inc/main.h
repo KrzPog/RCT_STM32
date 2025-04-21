@@ -75,7 +75,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
-#define COMM_MODE 0x04
+#define COMM_MODE 0x06
 
 #define COMM_MODE_BIT_ECHO_USB_APP 0x01 // Echo every data USB->Application to USB
 #define COMM_MODE_BIT_ECHO_BT_APP 0x02  // Echo every data BT->Application to USB
