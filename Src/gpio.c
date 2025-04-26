@@ -48,9 +48,13 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BLACKPILL_LED_GPIO_Port, BLACKPILL_LED_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : BLACKPILL_LED_Pin */
   GPIO_InitStruct.Pin = BLACKPILL_LED_Pin;
@@ -64,6 +68,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(BLACKPILL_KEY_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : TURRET_RELOAD_Pin TURRET_TRIGGER_Pin */
+  GPIO_InitStruct.Pin = TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : BLUETOOTH_STATE_Pin */
   GPIO_InitStruct.Pin = BLUETOOTH_STATE_Pin;

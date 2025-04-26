@@ -3,7 +3,7 @@
 # Debian & Ubuntu -> sudo apt install bluez* rfcomm
 # Fedora -> sudo dnf install bluez bluez-tools rfcomm
 
-# Default passwor: 1234
+# Default password: 1234
 
 XM_15B_MAC=00:11:35:81:60:85
 
@@ -16,3 +16,4 @@ bluetoothctl pair $XM_15B_MAC
 bluetoothctl trust $XM_15B_MAC
 bluetoothctl connect $XM_15B_MAC
 sudo rfcomm bind rfcomm0 $XM_15B_MAC
+# sudo rfcomm connect rfcomm1 $XM_15B_MAC

@@ -66,6 +66,10 @@ void Error_Handler(void);
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
 #define BLACKPILL_KEY_GPIO_Port GPIOA
+#define TURRET_RELOAD_Pin GPIO_PIN_14
+#define TURRET_RELOAD_GPIO_Port GPIOB
+#define TURRET_TRIGGER_Pin GPIO_PIN_15
+#define TURRET_TRIGGER_GPIO_Port GPIOB
 #define BLUETOOTH_STATE_Pin GPIO_PIN_8
 #define BLUETOOTH_STATE_GPIO_Port GPIOA
 #define BLUETOOTH_TX_Pin GPIO_PIN_9
@@ -75,6 +79,9 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+////////////////////////////////////////////////////////////////////////////////
+//! Comm mode related defines
+
 #define COMM_MODE 0x06
 
 #define COMM_MODE_BIT_ECHO_USB_APP 0x01 // Echo every data USB->Application to USB
@@ -82,7 +89,13 @@ void Error_Handler(void);
 #define COMM_MODE_BIT_ECHO_APP_BT 0x04  // Echo every data Application->BT to USB
 #define COMM_MODE_BIT_FRWD_USB_BT 0x08  // Forward every data USB->BT
 
+////////////////////////////////////////////////////////////////////////////////
+//! Modbus related defines
+
 #define MODBUS_SLAVE_ID 0x01
+
+////////////////////////////////////////////////////////////////////////////////
+
 
 /* USER CODE END Private defines */
 
