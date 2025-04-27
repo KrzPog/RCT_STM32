@@ -126,6 +126,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 #if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
     eMBPoll();
+    checkIfCommTimeout();
 #endif
     // Code responsible for refreshing the watchdog timer, without it the system will reset
     // HAL_IWDG_Refresh(&hiwdg);

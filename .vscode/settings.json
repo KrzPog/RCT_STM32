@@ -9,6 +9,7 @@
         "utility": "c",
         "bluetooth_xm_15b.h": "c",
         "compare": "cpp",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "reg_input.h": "c"
     }
 }

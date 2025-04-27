@@ -38,11 +38,14 @@
 //! Bit 3: 1 - Rotation motor overcurrent, 0 - Rotation motor normal
 #define REG_INPUT_ERROR_BIT_ROT_OVERCURRENT 0x0008
 
-#define REG_INPUT_ERROR_BIT_ELEV_DISCONNECTED 0x0010
 //! Bit 4: 1 - Elevation motor disconnected, 0 - Elevation motor connected
+#define REG_INPUT_ERROR_BIT_ELEV_DISCONNECTED 0x0010
 
-#define REG_INPUT_ERROR_BIT_ELEV_OVERCURRENT 0x0020
 //! Bit 5: 1 - Elevation motor overcurrent, 0 - Elevation motor normal
+#define REG_INPUT_ERROR_BIT_ELEV_OVERCURRENT 0x0020
+
+//! Bit 6: 1 - No Modbus Frame detected within MODBUS_COMM_TIMEOUT_ERROR_MS
+#define REG_INPUT_ERROR_BIT_COMM_TIMEOUT 0x0040
 
 //! int16, -3600 to 3600 ( -360.0 to 360.0 degrees with base 10 )
 #define REG_INPUT_ROT_POSITION 0x3006
@@ -80,9 +83,24 @@
 #include "main.h"
 
 extern uint16_t regInput[REG_INPUT_COUNT];
+extern volatile uint32_t lastFrameReceivedTime;
 
 void initRegInput(void);
 
-void updateRegInput(void); //!< for updating the input registers with current values ( especially these calculated, rest can be DMA )
+void updateRegInput(void); //!< @todo for updating the input registers with current values ( especially these calculated, rest can be DMA )
+
+void activateTurret(void);
+void deactivateTurret(void);
+
+void setTurretError(uint16_t errorCode);
+void clearTurretError(void);
+
+void reloadTurretToggle(void);
+
+void shootTurretToggle(void);
+
+void checkIfCommTimeout(void);
+
+void updateTurretStateLamp(void);
 
 #endif

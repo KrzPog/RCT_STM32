@@ -28,6 +28,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "ModbusRegisters/reg_input.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

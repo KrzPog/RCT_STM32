@@ -1,16 +1,17 @@
 #include "ModbusRegisters/reg_holding.h"
 
-uint16_t regHolding[REG_HOLDING_COUNT];
+uint16_t regHolding[REG_HOLDING_COUNT] = {0};
 
 void initRegHolding(void)
 {
-    regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] = 0x0000;
     regHolding[regHoldIx(REG_HOLDING_SHOOTING_TIME_LIMIT)] = 0xFFFF; //!< @todo optionally implement
 }
 
 eMBErrorCode eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode)
 {
     //! @note usAddress is 1-based (address specified in request frame + 1)
+
+    lastFrameReceivedTime = HAL_GetTick();
 
     if ((usAddress - 1) < REG_HOLDING_START)
         return MB_ENOREG;
@@ -44,17 +45,27 @@ eMBErrorCode eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRe
 
 void checkControlWord(void)
 {
+    if (regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] & REG_HOLDING_CONTROL_WORD_BIT_FAULT_RESET)
+    {
+        clearTurretError();
+        regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_FAULT_RESET;
+    }
+
+    if (regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] & REG_HOLDING_CONTROL_WORD_BIT_ACTIVATE)
+    {
+        activateTurret();
+        regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_ACTIVATE;
+    }
+
     if (regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] & REG_HOLDING_CONTROL_WORD_BIT_RELOAD)
     {
+        reloadTurretToggle();
         regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_RELOAD;
-        HAL_GPIO_TogglePin(TURRET_RELOAD_GPIO_Port, TURRET_RELOAD_Pin);
-        regInput[regInpIx(REG_INPUT_STATUS_WORD)] ^= REG_INPUT_STATUS_WORD_BIT_RELOADING;
     }
 
     if (regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] & REG_HOLDING_CONTROL_WORD_BIT_SHOOT)
     {
+        shootTurretToggle();
         regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_SHOOT;
-        HAL_GPIO_TogglePin(TURRET_TRIGGER_GPIO_Port, TURRET_TRIGGER_Pin);
-        regInput[regInpIx(REG_INPUT_STATUS_WORD)] ^= REG_INPUT_STATUS_WORD_BIT_SHOOTING;
     }
 }
