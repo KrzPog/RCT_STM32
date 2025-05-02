@@ -23,35 +23,34 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-    /* Private includes ----------------------------------------------------------*/
-    /* USER CODE BEGIN Includes */
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
-    /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-    /* Exported types ------------------------------------------------------------*/
-    /* USER CODE BEGIN ET */
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
 
-    /* USER CODE END ET */
+/* USER CODE END ET */
 
-    /* Exported constants --------------------------------------------------------*/
-    /* USER CODE BEGIN EC */
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
 
-    /* USER CODE END EC */
+/* USER CODE END EC */
 
-    /* Exported macro ------------------------------------------------------------*/
-    /* USER CODE BEGIN EM */
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
 
-    /* USER CODE END EM */
+/* USER CODE END EM */
 
-    /* Exported functions prototypes ---------------------------------------------*/
-    void Error_Handler(void);
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -67,6 +66,14 @@ extern "C"
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
 #define BLACKPILL_KEY_GPIO_Port GPIOA
+#define UNPUT_VOLTAGE_Pin GPIO_PIN_1
+#define UNPUT_VOLTAGE_GPIO_Port GPIOA
+#define INPUT_CURRENT_Pin GPIO_PIN_3
+#define INPUT_CURRENT_GPIO_Port GPIOA
+#define MOTOR1_CURRENT_Pin GPIO_PIN_0
+#define MOTOR1_CURRENT_GPIO_Port GPIOB
+#define MOTOR2_CURRENT_Pin GPIO_PIN_1
+#define MOTOR2_CURRENT_GPIO_Port GPIOB
 #define TURRET_STATE_LAMP_Pin GPIO_PIN_10
 #define TURRET_STATE_LAMP_GPIO_Port GPIOB
 #define TURRET_RELOAD_Pin GPIO_PIN_14
@@ -80,7 +87,7 @@ extern "C"
 #define BLUETOOTH_RX_Pin GPIO_PIN_10
 #define BLUETOOTH_RX_GPIO_Port GPIOA
 
-    /* USER CODE BEGIN Private defines */
+/* USER CODE BEGIN Private defines */
 
     ////////////////////////////////////////////////////////////////////////////////
     //! Comm mode related defines
@@ -101,7 +108,7 @@ extern "C"
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
