@@ -56,6 +56,7 @@ target_sources(${EXECUTABLE_NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Src/ExternalModules/bluetooth_XM_15B.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_holding.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_input.c
+    ${CMAKE_CURRENT_LIST_DIR}/Src/Sensors/sensors.c
 )
 
 # Add include paths
