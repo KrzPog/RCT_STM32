@@ -22,6 +22,6 @@ void shootTurretToggle(void);
 
 void checkIfCommTimeout(void);
 
-void updateTurretStateLamp(void);
+void stateLampUpdate(void);
 
 #endif

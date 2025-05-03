@@ -107,7 +107,7 @@ void checkIfCommTimeout(void)
         setTurretError(REG_INPUT_ERROR_BIT_COMM_TIMEOUT);
 }
 
-void updateTurretStateLamp(void)
+void stateLampUpdate(void)
 {
     switch (regInput[regInpIx(REG_INPUT_STATUS_WORD)] & (REG_INPUT_STATUS_WORD_BIT_FAULT | REG_INPUT_STATUS_WORD_BIT_ACTIVATED))
     {

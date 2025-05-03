@@ -11,6 +11,8 @@
         "compare": "cpp",
         "stdint.h": "c",
         "reg_input.h": "c",
-        "turretstates.h": "c"
+        "turretstates.h": "c",
+        "cstdint": "c",
+        "encoders.h": "c"
     }
 }

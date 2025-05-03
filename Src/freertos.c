@@ -26,7 +26,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "usbd_cdc_if.h"
+
 #include "App/turretStates.h"
+#include "ModbusRegisters/reg_input.h"
+#include "ModbusRegisters/reg_holding.h"
 #include "Sensors/encoders.h"
 
 /* USER CODE END Includes */
@@ -50,31 +54,52 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for speedUpdateTask */
-osThreadId_t speedUpdateTaskHandle;
-const osThreadAttr_t speedUpdateTask_attributes = {
-  .name = "speedUpdateTask",
+/* Definitions for task_encodersUpdate */
+osThreadId_t task_encodersUpdateHandle;
+const osThreadAttr_t task_encodersUpdate_attributes = {
+  .name = "task_encodersUpdate",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
+};
+/* Definitions for task_stateLampUpdate */
+osThreadId_t task_stateLampUpdateHandle;
+const osThreadAttr_t task_stateLampUpdate_attributes = {
+  .name = "task_stateLampUpdate",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for toggleStateLEDTask */
-osThreadId_t toggleStateLEDTaskHandle;
-const osThreadAttr_t toggleStateLEDTask_attributes = {
-  .name = "toggleStateLEDTask",
+/* Definitions for task_pollModbus */
+osThreadId_t task_pollModbusHandle;
+const osThreadAttr_t task_pollModbus_attributes = {
+  .name = "task_pollModbus",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
+};
+/* Definitions for task_checkIfTimeout */
+osThreadId_t task_checkIfTimeoutHandle;
+const osThreadAttr_t task_checkIfTimeout_attributes = {
+  .name = "task_checkIfTimeout",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for pollModbusTask */
-osThreadId_t pollModbusTaskHandle;
-const osThreadAttr_t pollModbusTask_attributes = {
-  .name = "pollModbusTask",
+/* Definitions for task_PIDCalculate_motor1 */
+osThreadId_t task_PIDCalculate_motor1Handle;
+const osThreadAttr_t task_PIDCalculate_motor1_attributes = {
+  .name = "task_PIDCalculate_motor1",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityHigh,
 };
-/* Definitions for checkIfTimeoutTask */
-osThreadId_t checkIfTimeoutTaskHandle;
-const osThreadAttr_t checkIfTimeoutTask_attributes = {
-  .name = "checkIfTimeoutTask",
+/* Definitions for task_PIDCalculate_motor2 */
+osThreadId_t task_PIDCalculate_motor2Handle;
+const osThreadAttr_t task_PIDCalculate_motor2_attributes = {
+  .name = "task_PIDCalculate_motor2",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for task_debugUSBPrint */
+osThreadId_t task_debugUSBPrintHandle;
+const osThreadAttr_t task_debugUSBPrint_attributes = {
+  .name = "task_debugUSBPrint",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
@@ -84,10 +109,13 @@ const osThreadAttr_t checkIfTimeoutTask_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void StartSpeedUpdateTask(void *argument);
-void StartToggleStateLEDTask(void *argument);
-void StartPollModbusTask(void *argument);
-void StartCheckIfTimeoutTask(void *argument);
+void taskInit_encodersUpdate(void *argument);
+void taskInit_stateLampUpdate(void *argument);
+void taskInit_pollModbus(void *argument);
+void taskInit_checkIfTimeout(void *argument);
+void taskInit_PIDCalculate_motor1(void *argument);
+void taskInit_PIDCalculate_motor2(void *argument);
+void taskInit_debugUSBPrint(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -119,17 +147,26 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of speedUpdateTask */
-  speedUpdateTaskHandle = osThreadNew(StartSpeedUpdateTask, NULL, &speedUpdateTask_attributes);
+  /* creation of task_encodersUpdate */
+  task_encodersUpdateHandle = osThreadNew(taskInit_encodersUpdate, NULL, &task_encodersUpdate_attributes);
 
-  /* creation of toggleStateLEDTask */
-  toggleStateLEDTaskHandle = osThreadNew(StartToggleStateLEDTask, NULL, &toggleStateLEDTask_attributes);
+  /* creation of task_stateLampUpdate */
+  task_stateLampUpdateHandle = osThreadNew(taskInit_stateLampUpdate, NULL, &task_stateLampUpdate_attributes);
 
-  /* creation of pollModbusTask */
-  pollModbusTaskHandle = osThreadNew(StartPollModbusTask, NULL, &pollModbusTask_attributes);
+  /* creation of task_pollModbus */
+  task_pollModbusHandle = osThreadNew(taskInit_pollModbus, NULL, &task_pollModbus_attributes);
 
-  /* creation of checkIfTimeoutTask */
-  checkIfTimeoutTaskHandle = osThreadNew(StartCheckIfTimeoutTask, NULL, &checkIfTimeoutTask_attributes);
+  /* creation of task_checkIfTimeout */
+  task_checkIfTimeoutHandle = osThreadNew(taskInit_checkIfTimeout, NULL, &task_checkIfTimeout_attributes);
+
+  /* creation of task_PIDCalculate_motor1 */
+  task_PIDCalculate_motor1Handle = osThreadNew(taskInit_PIDCalculate_motor1, NULL, &task_PIDCalculate_motor1_attributes);
+
+  /* creation of task_PIDCalculate_motor2 */
+  task_PIDCalculate_motor2Handle = osThreadNew(taskInit_PIDCalculate_motor2, NULL, &task_PIDCalculate_motor2_attributes);
+
+  /* creation of task_debugUSBPrint */
+  task_debugUSBPrintHandle = osThreadNew(taskInit_debugUSBPrint, NULL, &task_debugUSBPrint_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -141,56 +178,62 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartSpeedUpdateTask */
+/* USER CODE BEGIN Header_taskInit_encodersUpdate */
 /**
- * @brief  Function implementing the speedUpdateTask thread.
+ * @brief  Function implementing the task_encodersUpdate thread.
  * @param  argument: Not used
  * @retval None
  */
-/* USER CODE END Header_StartSpeedUpdateTask */
-void StartSpeedUpdateTask(void *argument)
+/* USER CODE END Header_taskInit_encodersUpdate */
+void taskInit_encodersUpdate(void *argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
-  /* USER CODE BEGIN StartSpeedUpdateTask */
+  /* USER CODE BEGIN taskInit_encodersUpdate */
+
+  encodersInit();
+
   /* Infinite loop */
   for (;;)
   {
-    encodersUpdate();
-    osDelay(10);
+    if (encoderUpdate((Encoder *)&motor1_encoder))
+      vTaskResume(task_PIDCalculate_motor1Handle);
+    if (encoderUpdate((Encoder *)&motor2_encoder))
+      vTaskResume(task_PIDCalculate_motor2Handle);
+    osDelay(ENCODER_SAMPLING_TIME_MS / portTICK_RATE_MS);
   }
-  /* USER CODE END StartSpeedUpdateTask */
+  /* USER CODE END taskInit_encodersUpdate */
 }
 
-/* USER CODE BEGIN Header_StartToggleStateLEDTask */
+/* USER CODE BEGIN Header_taskInit_stateLampUpdate */
 /**
- * @brief Function implementing the toggleStateLEDTask thread.
+ * @brief Function implementing the task_stateLampUpdate thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_StartToggleStateLEDTask */
-void StartToggleStateLEDTask(void *argument)
+/* USER CODE END Header_taskInit_stateLampUpdate */
+void taskInit_stateLampUpdate(void *argument)
 {
-  /* USER CODE BEGIN StartToggleStateLEDTask */
+  /* USER CODE BEGIN taskInit_stateLampUpdate */
   /* Infinite loop */
   for (;;)
   {
-    updateTurretStateLamp();
-    osDelay(LAMP_SWITCHING_WHEN_FAULT_MS);
+    stateLampUpdate();
+    osDelay(LAMP_SWITCHING_WHEN_FAULT_MS / portTICK_RATE_MS);
   }
-  /* USER CODE END StartToggleStateLEDTask */
+  /* USER CODE END taskInit_stateLampUpdate */
 }
 
-/* USER CODE BEGIN Header_StartPollModbusTask */
+/* USER CODE BEGIN Header_taskInit_pollModbus */
 /**
- * @brief Function implementing the pollModbusTask thread.
+ * @brief Function implementing the task_pollModbus thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_StartPollModbusTask */
-void StartPollModbusTask(void *argument)
+/* USER CODE END Header_taskInit_pollModbus */
+void taskInit_pollModbus(void *argument)
 {
-  /* USER CODE BEGIN StartPollModbusTask */
+  /* USER CODE BEGIN taskInit_pollModbus */
   /* Infinite loop */
   for (;;)
   {
@@ -199,28 +242,84 @@ void StartPollModbusTask(void *argument)
 #endif
     osDelay(1);
   }
-  /* USER CODE END StartPollModbusTask */
+  /* USER CODE END taskInit_pollModbus */
 }
 
-/* USER CODE BEGIN Header_StartCheckIfTimeoutTask */
+/* USER CODE BEGIN Header_taskInit_checkIfTimeout */
 /**
- * @brief Function implementing the checkIfTimeoutTask thread.
+ * @brief Function implementing the task_checkIfTimeout thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_StartCheckIfTimeoutTask */
-void StartCheckIfTimeoutTask(void *argument)
+/* USER CODE END Header_taskInit_checkIfTimeout */
+void taskInit_checkIfTimeout(void *argument)
 {
-  /* USER CODE BEGIN StartCheckIfTimeoutTask */
+  /* USER CODE BEGIN taskInit_checkIfTimeout */
   /* Infinite loop */
   for (;;)
   {
 #if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
     checkIfCommTimeout();
 #endif
-    osDelay(500);
+    osDelay(500 / portTICK_RATE_MS);
   }
-  /* USER CODE END StartCheckIfTimeoutTask */
+  /* USER CODE END taskInit_checkIfTimeout */
+}
+
+/* USER CODE BEGIN Header_taskInit_PIDCalculate_motor1 */
+/**
+ * @brief Function implementing the task_PIDCalculate_motor1 thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_PIDCalculate_motor1 */
+void taskInit_PIDCalculate_motor1(void *argument)
+{
+  /* USER CODE BEGIN taskInit_PIDCalculate_motor1 */
+  /* Infinite loop */
+  for (;;)
+  {
+    vTaskSuspend(NULL); //!< @todo implement PID calculation
+  }
+  /* USER CODE END taskInit_PIDCalculate_motor1 */
+}
+
+/* USER CODE BEGIN Header_taskInit_PIDCalculate_motor2 */
+/**
+ * @brief Function implementing the task_PIDCalculate_motor2 thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_PIDCalculate_motor2 */
+void taskInit_PIDCalculate_motor2(void *argument)
+{
+  /* USER CODE BEGIN taskInit_PIDCalculate_motor2 */
+  /* Infinite loop */
+  for (;;)
+  {
+    vTaskSuspend(NULL); //!< @todo implement PID calculation
+  }
+  /* USER CODE END taskInit_PIDCalculate_motor2 */
+}
+
+/* USER CODE BEGIN Header_taskInit_debugUSBPrint */
+/**
+ * @brief Function implementing the task_debugUSBPrint thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_debugUSBPrint */
+void taskInit_debugUSBPrint(void *argument)
+{
+  /* USER CODE BEGIN taskInit_debugUSBPrint */
+  /* Infinite loop */
+  for (;;)
+  {
+    //!< @note Purpose of this task is to print debug information to USB CDC
+    USR_Printf_USBD_CDC("Enc1 Pos: %5d, Enc1 Vel: %5d, Enc2 Pos: %5d, Enc2 Vel: %5d\r\n", (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
+    osDelay(DEBUG_USB_PRINT_MS / portTICK_RATE_MS);
+  }
+  /* USER CODE END taskInit_debugUSBPrint */
 }
 
 /* Private application code --------------------------------------------------*/

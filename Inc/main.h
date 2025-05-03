@@ -57,13 +57,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define COMM_BUFFER_SIZE 64
+#define COMM_BUFFER_SIZE 128
+#define MOTOR2_ENCODER_RESOLUTION 20
+#define MOTOR1_ENCODER_RESOLUTION 20
 #define TIM11_PRESCALER 95
 #define BLUETOOTH_DATA_BPS 9600
 #define TIM11_PERIOD 49
 #define IWDG_RELOAD 999
-#define MOTOR1_ENCODER_RESOLUTION 30
-#define MOTOR2_ENCODER_RESOLUTION 30
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
@@ -88,8 +88,8 @@ void Error_Handler(void);
 #define BLUETOOTH_TX_GPIO_Port GPIOA
 #define BLUETOOTH_RX_Pin GPIO_PIN_10
 #define BLUETOOTH_RX_GPIO_Port GPIOA
-#define MOTOR1_ENCDODER_A_Pin GPIO_PIN_4
-#define MOTOR1_ENCDODER_A_GPIO_Port GPIOB
+#define MOTOR1_ENCODER_A_Pin GPIO_PIN_4
+#define MOTOR1_ENCODER_A_GPIO_Port GPIOB
 #define MOTOR1_ENCODER_B_Pin GPIO_PIN_5
 #define MOTOR1_ENCODER_B_GPIO_Port GPIOB
 #define MOTOR2_ENCODER_A_Pin GPIO_PIN_6
@@ -115,6 +115,7 @@ void Error_Handler(void);
 #define MODBUS_SLAVE_ID 0x01
 #define MODBUS_COMM_TIMEOUT_ERROR_MS 0xFFFFFFFF //!< @note set timeout if no modbus frame received
 #define LAMP_SWITCHING_WHEN_FAULT_MS 200        //!< TURRET_STATE_LAMP toggling when fault detected
+#define DEBUG_USB_PRINT_MS 250                  //!< USB print period in ms
 
     ////////////////////////////////////////////////////////////////////////////////
 
