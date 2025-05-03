@@ -10,6 +10,7 @@
         "bluetooth_xm_15b.h": "c",
         "compare": "cpp",
         "stdint.h": "c",
-        "reg_input.h": "c"
+        "reg_input.h": "c",
+        "turretstates.h": "c"
     }
 }

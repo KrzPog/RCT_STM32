@@ -33,12 +33,11 @@
 
 #include "mb.h"
 #include "main.h"
+#include "App/turretStates.h"
 #include "ModbusRegisters/reg_input.h"
 
 extern uint16_t regHolding[REG_HOLDING_COUNT];
 
 void initRegHolding(void);
-
-void checkControlWord(void);
 
 #endif

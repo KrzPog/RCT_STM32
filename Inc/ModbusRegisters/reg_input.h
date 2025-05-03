@@ -81,26 +81,10 @@
 
 #include "mb.h"
 #include "main.h"
+#include "App/turretStates.h"
 
 extern uint16_t regInput[REG_INPUT_COUNT];
-extern volatile uint32_t lastFrameReceivedTime;
 
 void initRegInput(void);
-
-void updateRegInput(void); //!< @todo for updating the input registers with current values ( especially these calculated, rest can be DMA )
-
-void activateTurret(void);
-void deactivateTurret(void);
-
-void setTurretError(uint16_t errorCode);
-void clearTurretError(void);
-
-void reloadTurretToggle(void);
-
-void shootTurretToggle(void);
-
-void checkIfCommTimeout(void);
-
-void updateTurretStateLamp(void);
 
 #endif

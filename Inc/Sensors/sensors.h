@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#include "adc.h" // lub gdzie masz ADC handle
+#include "ModbusRegisters/reg_input.h"
+#include "ModbusRegisters/reg_holding.h"
+
 void Sensors_Init(void);
 void Sensors_Update(void);
 

@@ -1,7 +1,4 @@
-#include "Inc/sensors.h"
-#include "Inc/adc.h" // lub gdzie masz ADC handle
-#include "Inc/ModbusRegisters/reg_input.h"
-#include "Inc/ModbusRegisters/reg_holding.h"
+#include "Sensors/sensors.h"
 
 void Sensors_Init(void) {
     
