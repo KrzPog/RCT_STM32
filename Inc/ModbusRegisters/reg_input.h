@@ -2,7 +2,7 @@
 #define _REG_INPUT_H
 
 #define REG_INPUT_START 0x3000
-#define REG_INPUT_COUNT 11
+#define REG_INPUT_COUNT 17
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -70,6 +70,24 @@
 
 //! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
 #define REG_INPUT_ELEV_CURRENT 0x3014
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_ACCEL_X 0x3014
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_ACCEL_Y 0x3016
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_ACCEL_Z 0x3018
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_GYRO_X 0x301A
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_GYRO_Y 0x301C
+
+//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+#define REG_GYRO_Z 0x301E
 
 ////////////////////////////////////////////////////////////////////////////////
 

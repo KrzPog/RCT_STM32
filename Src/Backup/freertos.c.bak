@@ -105,14 +105,20 @@ const osThreadAttr_t task_debugUSBPrint_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for task_analogSensorsUpdate */
-osThreadId_t task_analogSensorsUpdateHandle;
-const osThreadAttr_t task_analogSensorsUpdate_attributes = {
-  .name = "task_analogSensorsUpdate",
+/* Definitions for task_checkAccelValues */
+osThreadId_t task_checkAccelValuesHandle;
+const osThreadAttr_t task_checkAccelValues_attributes = {
+  .name = "task_checkAccelValues",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
-
+/* Definitions for task_checkAnalogSensorsData */
+osThreadId_t task_checkAnalogSensorsDataHandle;
+const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
+  .name = "task_checkAnalogSensorsData",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -126,7 +132,8 @@ void taskInit_checkIfTimeout(void *argument);
 void taskInit_PIDCalculate_motor1(void *argument);
 void taskInit_PIDCalculate_motor2(void *argument);
 void taskInit_debugUSBPrint(void *argument);
-void taskInit_analogSensorsUpdate(void *argument);
+void taskInit_checkAccelValues(void *argument);
+void taskInit_checkAnalogSensorsData(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -179,8 +186,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of task_debugUSBPrint */
   task_debugUSBPrintHandle = osThreadNew(taskInit_debugUSBPrint, NULL, &task_debugUSBPrint_attributes);
 
-  /* creation of task_analogSensorsUpdate */
-  task_analogSensorsUpdateHandle = osThreadNew(taskInit_analogSensorsUpdate, NULL, &task_analogSensorsUpdate_attributes);
+  /* creation of task_checkAccelValues */
+  task_checkAccelValuesHandle = osThreadNew(taskInit_checkAccelValues, NULL, &task_checkAccelValues_attributes);
+
+  /* creation of task_checkAnalogSensorsData */
+  task_checkAnalogSensorsDataHandle = osThreadNew(taskInit_checkAnalogSensorsData, NULL, &task_checkAnalogSensorsData_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -335,16 +345,44 @@ void taskInit_debugUSBPrint(void *argument)
   }
   /* USER CODE END taskInit_debugUSBPrint */
 }
-void taskInit_analogSensorsUpdate(void *argument)
-{
-  /* USER CODE BEGIN taskInit_analogSensorsUpdate */ 
 
+/* USER CODE BEGIN Header_taskInit_checkAccelValues */
+/**
+ * @brief Function implementing the task_checkAccelValues thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_checkAccelValues */
+void taskInit_checkAccelValues(void *argument)
+{
+  /* USER CODE BEGIN taskInit_checkAccelValues */
+  MPU6050_Init();
+  /* Infinite loop */
   for (;;)
   {
-    analogSensorsUpdate(); 
-    osDelay(50); // Odświeżanie co 50 ms (20 Hz)
+    accelerometerUpdate();
+    osDelay(1);
   }
-  /* USER CODE END taskInit_analogSensorsUpdate */
+  /* USER CODE END taskInit_checkAccelValues */
+}
+
+/* USER CODE BEGIN Header_taskInit_checkAnalogSensorsData */
+/**
+ * @brief Function implementing the task_checkAnalogSensorsData thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_checkAnalogSensorsData */
+void taskInit_checkAnalogSensorsData(void *argument)
+{
+  /* USER CODE BEGIN taskInit_checkAnalogSensorsData */
+  /* Infinite loop */
+  for (;;)
+  {
+    analogSensorsUpdate();
+    osDelay(1);
+  }
+  /* USER CODE END taskInit_checkAnalogSensorsData */
 }
 
 /* Private application code --------------------------------------------------*/

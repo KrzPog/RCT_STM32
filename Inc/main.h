@@ -58,8 +58,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define COMM_BUFFER_SIZE 128
-#define MOTOR2_ENCODER_RESOLUTION 15
-#define MOTOR1_ENCODER_RESOLUTION 15
+#define MOTOR2_ENCODER_RESOLUTION 20
+#define MOTOR1_ENCODER_RESOLUTION 20
 #define TIM11_PRESCALER 95
 #define BLUETOOTH_DATA_BPS 9600
 #define TIM11_PERIOD 49
