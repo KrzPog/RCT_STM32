@@ -5,6 +5,7 @@
 #define ENCODER_MOVING_AVERAGE_COUNT 64 //!< Number of samples to average the speed
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "main.h"

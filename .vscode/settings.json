@@ -13,6 +13,7 @@
         "reg_input.h": "c",
         "turretstates.h": "c",
         "cstdint": "c",
-        "encoders.h": "c"
+        "encoders.h": "c",
+        "gpio.h": "c"
     }
 }

@@ -58,8 +58,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define COMM_BUFFER_SIZE 128
-#define MOTOR2_ENCODER_RESOLUTION 20
-#define MOTOR1_ENCODER_RESOLUTION 20
+#define MOTOR2_ENCODER_RESOLUTION 15
+#define MOTOR1_ENCODER_RESOLUTION 15
 #define TIM11_PRESCALER 95
 #define BLUETOOTH_DATA_BPS 9600
 #define TIM11_PERIOD 49
@@ -70,6 +70,9 @@ void Error_Handler(void);
 #define BLACKPILL_KEY_GPIO_Port GPIOA
 #define INPUT_VOLTAGE_Pin GPIO_PIN_1
 #define INPUT_VOLTAGE_GPIO_Port GPIOA
+#define TURRET_DISABLE_SIGNAL_Pin GPIO_PIN_2
+#define TURRET_DISABLE_SIGNAL_GPIO_Port GPIOA
+#define TURRET_DISABLE_SIGNAL_EXTI_IRQn EXTI2_IRQn
 #define INPUT_CURRENT_Pin GPIO_PIN_3
 #define INPUT_CURRENT_GPIO_Port GPIOA
 #define MOTOR1_CURRENT_Pin GPIO_PIN_0
