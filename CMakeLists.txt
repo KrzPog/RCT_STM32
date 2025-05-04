@@ -73,7 +73,8 @@ target_sources(${EXECUTABLE_NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_holding.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_input.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/Sensors/encoders.c
-    # ${CMAKE_CURRENT_LIST_DIR}/Src/Sensors/sensors.c
+    ${CMAKE_CURRENT_LIST_DIR}/Src/Sensors/analog_sensors.c
+    ${CMAKE_CURRENT_LIST_DIR}/Src/Sensors/accelerometer.c
 )
 
 # Add include paths

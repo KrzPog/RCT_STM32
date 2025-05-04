@@ -105,6 +105,14 @@ const osThreadAttr_t task_debugUSBPrint_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for task_analogSensorsUpdate */
+osThreadId_t task_analogSensorsUpdateHandle;
+const osThreadAttr_t task_analogSensorsUpdate_attributes = {
+  .name = "task_analogSensorsUpdate",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
+};
+
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -118,6 +126,7 @@ void taskInit_checkIfTimeout(void *argument);
 void taskInit_PIDCalculate_motor1(void *argument);
 void taskInit_PIDCalculate_motor2(void *argument);
 void taskInit_debugUSBPrint(void *argument);
+void taskInit_analogSensorsUpdate(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -169,6 +178,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of task_debugUSBPrint */
   task_debugUSBPrintHandle = osThreadNew(taskInit_debugUSBPrint, NULL, &task_debugUSBPrint_attributes);
+
+  /* creation of task_analogSensorsUpdate */
+  task_analogSensorsUpdateHandle = osThreadNew(taskInit_analogSensorsUpdate, NULL, &task_analogSensorsUpdate_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -322,6 +334,17 @@ void taskInit_debugUSBPrint(void *argument)
     osDelay(DEBUG_USB_PRINT_MS / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
+}
+void taskInit_analogSensorsUpdate(void *argument)
+{
+  /* USER CODE BEGIN taskInit_analogSensorsUpdate */ 
+
+  for (;;)
+  {
+    analogSensorsUpdate(); 
+    osDelay(50); // Odświeżanie co 50 ms (20 Hz)
+  }
+  /* USER CODE END taskInit_analogSensorsUpdate */
 }
 
 /* Private application code --------------------------------------------------*/
