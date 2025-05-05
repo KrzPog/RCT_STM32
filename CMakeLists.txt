@@ -19,7 +19,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wsign-conversion")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wsign-compare")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic")
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined,signed-integer-overflow,integer-divide-by-zero")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -28,7 +27,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-conversion")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-compare")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined,signed-integer-overflow,integer-divide-by-zero")
 
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
