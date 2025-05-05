@@ -11,14 +11,13 @@
 
 // Deklaracje funkcji
 void Start_ADC_Conversion(void);
-float Get_Input_Voltage(void);
-float Get_Input_Current(void);
-float Get_Motor1_Current(void);
-float Get_Motor2_Current(void);
 
 /**
  * @brief Aktualizuje rejestry wejściowe Modbus wartościami odczytanymi z czujników analogowych
  */
-void analogSensorsUpdate(void);
+void analogSensorsUpdate();
+
+// Deklaracja callback'a dla konwersji ADC
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc);
 
 #endif /* ANALOG_SENSORS_H */

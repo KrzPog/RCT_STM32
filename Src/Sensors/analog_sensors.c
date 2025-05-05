@@ -2,13 +2,27 @@
 #include "ModbusRegisters/reg_input.h"
 
 uint16_t adc_values[4] = {0}; // Tablica na wartości z 4 kanałów
+volatile uint8_t adc_conversion_complete = 0; // Flaga informująca o zakończeniu konwersji
 
 /**
  * @brief Rozpoczyna konwersję ADC z wykorzystaniem DMA
  */
 void Start_ADC_Conversion(void)
 {
+  adc_conversion_complete = 0; // Resetuj flagę przed rozpoczęciem nowej konwersji
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_values, 4);
+}
+
+/**
+ * @brief Callback wywoływany po zakończeniu konwersji ADC przez DMA
+ * @param hadc Wskaźnik na strukturę ADC
+ */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+  if(hadc->Instance == ADC1)
+  {
+    adc_conversion_complete = 1; // Ustaw flagę po zakończeniu konwersji
+  }
 }
 
 /**
@@ -18,16 +32,30 @@ void Start_ADC_Conversion(void)
  */
 void analogSensorsUpdate(void)
 {
-  // Upewnij się, że konwersja ADC jest zakończona
-  if (HAL_ADC_GetState(&hadc1) != HAL_ADC_STATE_BUSY_REG && HAL_ADC_GetState(&hadc1) != HAL_ADC_STATE_BUSY)
+  static uint16_t local_adc_values[4] = {0}; // Lokalna kopia wartości ADC
+  
+  // Sprawdź, czy konwersja jest zakończona
+  if (adc_conversion_complete)
   {
-    // Bezpośrednie przekazanie surowych wartości ADC do rejestrów
-    regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)] = adc_values[0];
-    regInput[regInpIx(REG_INPUT_MAIN_CURRENT)] = adc_values[1];
-    regInput[regInpIx(REG_INPUT_ROT_CURRENT)] = adc_values[2];
-    regInput[regInpIx(REG_INPUT_ELEV_CURRENT)] = adc_values[3];
+    // Wykonaj lokalną kopię wartości ADC, aby uniknąć problemu z wyścigami
+    for (int i = 0; i < 4; i++)
+    {
+      local_adc_values[i] = adc_values[i];
+    }
+    
+    // Przypisz wartości do rejestrów Modbus
+    regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)] = local_adc_values[0];
+    regInput[regInpIx(REG_INPUT_MAIN_CURRENT)] = local_adc_values[1];
+    regInput[regInpIx(REG_INPUT_ROT_CURRENT)] = local_adc_values[2];
+    regInput[regInpIx(REG_INPUT_ELEV_CURRENT)] = local_adc_values[3];
     
     // Rozpocznij kolejną konwersję
+    Start_ADC_Conversion();
+  }
+  else if (HAL_ADC_GetState(&hadc1) != HAL_ADC_STATE_BUSY_REG && 
+           HAL_ADC_GetState(&hadc1) != HAL_ADC_STATE_BUSY)
+  {
+    // Jeśli ADC nie jest zajęty, a flaga nie jest ustawiona, rozpocznij konwersję
     Start_ADC_Conversion();
   }
 }

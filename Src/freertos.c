@@ -341,12 +341,7 @@ void taskInit_debugUSBPrint(void *argument)
   {
     //!< @note Purpose of this task is to print debug information to USB CDC
     // USR_Printf_USBD_CDC("Enc1 Pos: %5d, Enc1 Vel: %5d, Enc2 Pos: %5d, Enc2 Vel: %5d,\r\n,  (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
-    // USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n  Analog [1:%5d 2:%5d 3:%5d 4:%5d]\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
-    // USR_Printf_USBD_CDC("ADC raw: %d, %d, %d, %d\r\n",
-    //                    adc_values[0], adc_values[1], adc_values[2], adc_values[3]);
-
-    // Wypisz dane z rejestrów
-    USR_Printf_USBD_CDC("Analog: %d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)]);
+    USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n  Analog [1:%5d 2:%5d 3:%5d 4:%5d]\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
 
     osDelay(300);
   }
