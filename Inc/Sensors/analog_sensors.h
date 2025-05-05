@@ -5,7 +5,7 @@
 #include "adc.h"
 
 // Stałe dla czujników
-#define VOLTAGE_DIVIDER_RATIO   5.7f    
+#define VOLTAGE_DIVIDER_RATIO   7.58f    
 #define CURRENT_SENSOR_OFFSET   1.65f  
 #define CURRENT_SENSOR_SENSITIVITY 0.066f 
 

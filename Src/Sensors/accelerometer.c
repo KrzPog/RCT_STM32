@@ -2,6 +2,9 @@
 #include "ModbusRegisters/reg_input.h"
 #include <stdint.h>
 
+/**
+ * @brief Inicjalizacja akcelerometru MPU6050
+ */
 void MPU6050_Init(void)
 {
   uint8_t check, data;
@@ -29,78 +32,44 @@ void MPU6050_Init(void)
   }
 }
 
-void MPU6050_Read_Accel(float *AccelX, float *AccelY, float *AccelZ)
-{
-  uint8_t data[6];
-  int16_t rawX, rawY, rawZ;
-
-  // Odczyt 6 bajtów danych począwszy od rejestru ACCEL_XOUT_H
-  HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, data, 6, 100);
-
-  // Łączenie bajtów
-  rawX = (int16_t)((data[0] << 8) | data[1]);
-  rawY = (int16_t)((data[2] << 8) | data[3]);
-  rawZ = (int16_t)((data[4] << 8) | data[5]);
-
-  // Konwersja na jednostki g (przy zakresie ±2g)
-  *AccelX = rawX / 16384.0f;
-  *AccelY = rawY / 16384.0f;
-  *AccelZ = rawZ / 16384.0f;
-}
-
-void MPU6050_Read_Gyro(float *GyroX, float *GyroY, float *GyroZ)
-{
-  uint8_t data[6];
-  int16_t rawX, rawY, rawZ;
-
-  // Odczyt 6 bajtów danych począwszy od rejestru GYRO_XOUT_H
-  HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, GYRO_XOUT_H_REG, 1, data, 6, 100);
-
-  // Łączenie bajtów
-  rawX = (int16_t)((data[0] << 8) | data[1]);
-  rawY = (int16_t)((data[2] << 8) | data[3]);
-  rawZ = (int16_t)((data[4] << 8) | data[5]);
-
-  // Konwersja na deg/s (przy zakresie ±250 deg/s)
-  *GyroX = rawX / 131.0f;
-  *GyroY = rawY / 131.0f;
-  *GyroZ = rawZ / 131.0f;
-}
-
 /**
- * @brief Aktualizuj rejestry wejściowe Modbus danymi z akcelerometru i żyroskopu
- *
- * Ta funkcja czyta dane z MPU6050 i zapisuje je do rejestrów wejściowych.
- * Ponieważ w reg_input.h nie ma zdefiniowanych rejestrów dla tych danych,
- * używamy zdefiniowanych poniżej adresów. Upewnij się, że są one wolne
- * i nie kolidują z innymi rejestrami.
+ * @brief Aktualizuje rejestry wejściowe Modbus danymi z akcelerometru i żyroskopu
  */
 void accelerometerUpdate(void)
 {
-  float accelX, accelY, accelZ;
-  float gyroX, gyroY, gyroZ;
+  uint8_t data[6];
+  int16_t rawX, rawY, rawZ;
+  HAL_StatusTypeDef status;
 
-  // Odczyt danych z MPU6050
-  MPU6050_Read_Accel(&accelX, &accelY, &accelZ);
-  MPU6050_Read_Gyro(&gyroX, &gyroY, &gyroZ);
+  // Odczyt surowych danych akcelerometru
+  status = HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, data, 6, 100);
+  
+  if (status == HAL_OK)
+  {
+    // Łączenie bajtów
+    rawX = (int16_t)((data[0] << 8) | data[1]);
+    rawY = (int16_t)((data[2] << 8) | data[3]);
+    rawZ = (int16_t)((data[4] << 8) | data[5]);
 
-  // Przygotowanie wartości dla rejestrów Modbus
-  // Dla akcelerometru: przeliczamy wartości z zakresu ±2g na int16_t (-32768 do 32767)
-  // Wartość 1g = 16384 jednostek, czyli pełna skala to ok. ±2g
-  int16_t accelX_int = (int16_t)(accelX * 16384.0f);
-  int16_t accelY_int = (int16_t)(accelY * 16384.0f);
-  int16_t accelZ_int = (int16_t)(accelZ * 16384.0f);
+    // Zapis surowych wartości do rejestrów
+    regInput[regInpIx(REG_ACCEL_X)] = (uint16_t)rawX;
+    regInput[regInpIx(REG_ACCEL_Y)] = (uint16_t)rawY;
+    regInput[regInpIx(REG_ACCEL_Z)] = (uint16_t)rawZ;
+  }
 
-  // Dla żyroskopu: przeliczamy wartości z zakresu ±250°/s na int16_t (-32768 do 32767)
-  // Wartość 250°/s = 32768 jednostek, czyli pełna skala to ok. ±250°/s
-  int16_t gyroX_int = (int16_t)(gyroX * 131.0f);
-  int16_t gyroY_int = (int16_t)(gyroY * 131.0f);
-  int16_t gyroZ_int = (int16_t)(gyroZ * 131.0f);
+  // Odczyt surowych danych żyroskopu
+  status = HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, GYRO_XOUT_H_REG, 1, data, 6, 100);
+  
+  if (status == HAL_OK)
+  {
+    // Łączenie bajtów
+    rawX = (int16_t)((data[0] << 8) | data[1]);
+    rawY = (int16_t)((data[2] << 8) | data[3]);
+    rawZ = (int16_t)((data[4] << 8) | data[5]);
 
-  regInput[regInpIx(REG_ACCEL_X)] = (uint16_t)accelX_int;
-  regInput[regInpIx(REG_ACCEL_Y)] = (uint16_t)accelY_int;
-  regInput[regInpIx(REG_ACCEL_Z)] = (uint16_t)accelZ_int;
-  regInput[regInpIx(REG_GYRO_X)] = (uint16_t)gyroX_int;
-  regInput[regInpIx(REG_GYRO_Y)] = (uint16_t)gyroY_int;
-  regInput[regInpIx(REG_GYRO_Z)] = (uint16_t)gyroZ_int;
+    // Zapis surowych wartości do rejestrów
+    regInput[regInpIx(REG_GYRO_X)] = (uint16_t)rawX;
+    regInput[regInpIx(REG_GYRO_Y)] = (uint16_t)rawY;
+    regInput[regInpIx(REG_GYRO_Z)] = (uint16_t)rawZ;
+  }
 }

@@ -71,23 +71,15 @@
 //! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
 #define REG_INPUT_ELEV_CURRENT 0x3014
 
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_ACCEL_X 0x3014
+//! uint16_t, ±2g (LSB/g: 16 384)
+#define REG_ACCEL_X 0x3016
+#define REG_ACCEL_Y 0x3018
+#define REG_ACCEL_Z 0x301A
 
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_ACCEL_Y 0x3016
-
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_ACCEL_Z 0x3018
-
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_GYRO_X 0x301A
-
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_GYRO_Y 0x301C
-
-//! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
-#define REG_GYRO_Z 0x301E
+//! uint16_t, ±250°/s (LSB/°/s: 131)
+#define REG_GYRO_X 0x301C
+#define REG_GYRO_Y 0x301E
+#define REG_GYRO_Z 0x3020
 
 ////////////////////////////////////////////////////////////////////////////////
 
