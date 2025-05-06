@@ -2,7 +2,7 @@
 #define _ENCODERS_H
 
 #define ENCODER_SAMPLING_TIME_MS 10   //!< Encoder update period in ms
-#define ENCODER_MOVING_AVERAGE_COUNT 64 //!< Number of samples to average the speed
+#define ENCODER_MOVING_AVERAGE_COUNT 32 //!< Number of samples to average the speed
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,8 +15,8 @@
 typedef struct
 {
     uint32_t prevTime;       //!< last update time (ms)
-    uint16_t *pPosReg;       //!< pointer to position register
-    uint16_t *pSpeedReg;     //!< pointer to speed register
+    int16_t *pPosReg;       //!< pointer to position register
+    int16_t *pSpeedReg;     //!< pointer to speed register
     TIM_HandleTypeDef *pTim; //!< pointer to timer handle
 
     struct Position
@@ -54,13 +54,13 @@ typedef struct
     } Speed;
 } Encoder;
 
-extern Encoder motor1_encoder;
-extern Encoder motor2_encoder;
+extern Encoder rot_motor_encoder;
+extern Encoder elev_motor_encoder;
 
 void encodersInit(void);
 bool encoderUpdate(Encoder *pEncoder);
 
-void USR_TIM_MOTOR1_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim);
-void USR_TIM_MOTOR2_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim);
+void USR_TIM_ROT_MOTOR_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim);
+void USR_TIM_ELEV_MOTOR_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim);
 
 #endif
