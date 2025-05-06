@@ -340,13 +340,12 @@ void taskInit_debugUSBPrint(void *argument)
   for (;;)
   {
     //!< @note Purpose of this task is to print debug information to USB CDC
-    // USR_Printf_USBD_CDC("Rot Pos: %5d, Rot Vel: %5d, Elev Pos: %5d, Elev Vel: %5d,\r\n",  rot_motor_encoder.Position.Raw.newVal, rot_motor_encoder.Speed.raw, elev_motor_encoder.Position.Raw.newVal, elev_motor_encoder.Speed.raw);
-    // USR_Printf_USBD_CDC("Rot Pos: %5d, Rot Vel: %5d, Elev Pos: %5d, Elev Vel: %5d,\r\n",  (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
-
-    // USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n  Analog [1:%5d 2:%5d 3:%5d 4:%5d]\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
-    USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)]);
-
-    osDelay(100 / portTICK_RATE_MS);
+    USR_Printf_USBD_CDC("\tRot [P:%5d V:%6d], Elev [P:%5d V:%6d]", (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
+    osDelay(5 / portTICK_RATE_MS);
+    USR_Printf_USBD_CDC("\tAccel [X:%6d Y:%6d Z:%6d], Gyro [X:%6d Y:%6d Z:%6d]", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)]);
+    osDelay(5 / portTICK_RATE_MS);
+    USR_Printf_USBD_CDC("\tV_Main:%5d, I_Main:%5d, I_Rot:%5d, I_Elev:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
+    osDelay(90 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
 }

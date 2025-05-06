@@ -71,7 +71,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : TURRET_DISABLE_SIGNAL_Pin */
   GPIO_InitStruct.Pin = TURRET_DISABLE_SIGNAL_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(TURRET_DISABLE_SIGNAL_GPIO_Port, &GPIO_InitStruct);
 
