@@ -49,7 +49,11 @@ bool encoderUpdate(Encoder *pEncoder)
 
     pEncoder->Position.Raw.oldVal = pEncoder->Position.Raw.newVal;
     pEncoder->Position.Rebased.oldVal = pEncoder->Position.Rebased.newVal;
-    pEncoder->Position.Raw.newVal = __HAL_TIM_GET_COUNTER(pEncoder->pTim);
+    pEncoder->Position.Raw.newVal = (int16_t)__HAL_TIM_GET_COUNTER(pEncoder->pTim);
+    if (pEncoder->Position.Raw.newVal >= (int16_t)pEncoder->pTim->Instance->CCR3)
+        pEncoder->Position.Raw.newVal -= (int16_t)pEncoder->pTim->Instance->CCR3;
+    else if (pEncoder->Position.Raw.newVal <= (-1 * (int16_t)pEncoder->pTim->Instance->CCR3))
+        pEncoder->Position.Raw.newVal += (int16_t)pEncoder->pTim->Instance->CCR3;
     pEncoder->Position.Rebased.newVal = (int16_t)(pEncoder->Position.Raw.newVal * INT32_C(3600) / (int16_t)pEncoder->pTim->Instance->CCR3); //!< lower reload value
 
     if (pEncoder->Position.Rebased.newVal != *(pEncoder->pPosReg))
