@@ -60,23 +60,32 @@
 #define REG_INPUT_ELEV_SPEED 0x300C
 
 //! uint16, 0 to 0xFFFF ( voltage, linear 0 to 25V )
+// voltage = reg / 65535.0f * 25.0f -> przeliczenie liniowe z jednostek "surowych" na fizyczne
 #define REG_INPUT_MAIN_VOLTAGE 0x300E
 
 //! uint16, 0 to 0xFFFF ( current, linear 0 to 50A )
+// current = raw * 50.0f / 65535.0f -> przeliczenie liniowe z jednostek "surowych" na fizyczne
 #define REG_INPUT_MAIN_CURRENT 0x3010
 
 //! uint16, 0 to 0xFFFF ( current, linear 0 to 30A )
+// current = raw * 30.0f / 65535.0f -> przeliczenie liniowe z jednostek "surowych" na fizyczne
 #define REG_INPUT_ROT_CURRENT 0x3012
 
 //! uint16, 0 to 0xFFFF ( current, linear 0 to 20A )
+// current = raw * 20.0f / 65535.0f -> przeliczenie liniowe z jednostek "surowych" na fizyczne
 #define REG_INPUT_ELEV_CURRENT 0x3014
 
 //! uint16_t, ±2g (LSB/g: 16 384)
+// raw = regInput[regInpIx(REG_ACCEL_X)] 
+// acc_g = raw / 16384.0f;       -> w jednostkach g
+// acc_ms2 = acc_g * 9.81f;      -> w m/s²
 #define REG_ACCEL_X 0x3016
 #define REG_ACCEL_Y 0x3018
 #define REG_ACCEL_Z 0x301A
 
 //! uint16_t, ±250°/s (LSB/°/s: 131)
+// raw = regInput[regInpIx(REG_GYRO_X)];
+// gyro_dps = raw / 131.0f;      -> w stopniach na sekundę
 #define REG_GYRO_X 0x301C
 #define REG_GYRO_Y 0x301E
 #define REG_GYRO_Z 0x3020

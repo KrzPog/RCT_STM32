@@ -59,65 +59,65 @@
 /* Definitions for task_encodersUpdate */
 osThreadId_t task_encodersUpdateHandle;
 const osThreadAttr_t task_encodersUpdate_attributes = {
-  .name = "task_encodersUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_encodersUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
 };
 /* Definitions for task_stateLampUpdate */
 osThreadId_t task_stateLampUpdateHandle;
 const osThreadAttr_t task_stateLampUpdate_attributes = {
-  .name = "task_stateLampUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+    .name = "task_stateLampUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for task_pollModbus */
 osThreadId_t task_pollModbusHandle;
 const osThreadAttr_t task_pollModbus_attributes = {
-  .name = "task_pollModbus",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+    .name = "task_pollModbus",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityBelowNormal,
 };
 /* Definitions for task_checkIfTimeout */
 osThreadId_t task_checkIfTimeoutHandle;
 const osThreadAttr_t task_checkIfTimeout_attributes = {
-  .name = "task_checkIfTimeout",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "task_checkIfTimeout",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for task_PIDCalculate_motor1 */
 osThreadId_t task_PIDCalculate_motor1Handle;
 const osThreadAttr_t task_PIDCalculate_motor1_attributes = {
-  .name = "task_PIDCalculate_motor1",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "task_PIDCalculate_motor1",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for task_PIDCalculate_motor2 */
 osThreadId_t task_PIDCalculate_motor2Handle;
 const osThreadAttr_t task_PIDCalculate_motor2_attributes = {
-  .name = "task_PIDCalculate_motor2",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "task_PIDCalculate_motor2",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for task_debugUSBPrint */
 osThreadId_t task_debugUSBPrintHandle;
 const osThreadAttr_t task_debugUSBPrint_attributes = {
-  .name = "task_debugUSBPrint",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "task_debugUSBPrint",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for task_checkAccelValues */
 osThreadId_t task_checkAccelValuesHandle;
 const osThreadAttr_t task_checkAccelValues_attributes = {
-  .name = "task_checkAccelValues",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_checkAccelValues",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
 };
 /* Definitions for task_checkAnalogSensorsData */
 osThreadId_t task_checkAnalogSensorsDataHandle;
 const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
-  .name = "task_checkAnalogSensorsData",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_checkAnalogSensorsData",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -139,11 +139,12 @@ extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -199,7 +200,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_taskInit_encodersUpdate */
@@ -342,8 +342,9 @@ void taskInit_debugUSBPrint(void *argument)
     //!< @note Purpose of this task is to print debug information to USB CDC
     // USR_Printf_USBD_CDC("Rot Pos: %5d, Rot Vel: %5d, Elev Pos: %5d, Elev Vel: %5d,\r\n",  rot_motor_encoder.Position.Raw.newVal, rot_motor_encoder.Speed.raw, elev_motor_encoder.Position.Raw.newVal, elev_motor_encoder.Speed.raw);
     // USR_Printf_USBD_CDC("Rot Pos: %5d, Rot Vel: %5d, Elev Pos: %5d, Elev Vel: %5d,\r\n",  (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
-    
-    USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n  Analog [1:%5d 2:%5d 3:%5d 4:%5d]\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
+
+    // USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n  Analog [1:%5d 2:%5d 3:%5d 4:%5d]\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_MAIN_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ROT_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_ELEV_CURRENT)]);
+    USR_Printf_USBD_CDC("Accel [X:%5d Y:%5d Z:%5d], Gyro [X:%5d Y:%5d Z:%5d],\r\n", (int16_t)regInput[regInpIx(REG_ACCEL_X)], (int16_t)regInput[regInpIx(REG_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_GYRO_X)], (int16_t)regInput[regInpIx(REG_GYRO_Y)], (int16_t)regInput[regInpIx(REG_GYRO_Z)]);
 
     osDelay(100 / portTICK_RATE_MS);
   }
@@ -393,4 +394,3 @@ void taskInit_checkAnalogSensorsData(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-
