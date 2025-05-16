@@ -52,9 +52,9 @@ void accelerometerUpdate(void)
     rawZ = (int16_t)((data[4] << 8) | data[5]);
 
     // Zapis surowych wartości do rejestrów
-    regInput[regInpIx(REG_ACCEL_X)] = (uint16_t)rawX;
-    regInput[regInpIx(REG_ACCEL_Y)] = (uint16_t)rawY;
-    regInput[regInpIx(REG_ACCEL_Z)] = (uint16_t)rawZ;
+    regInput[regInpIx(REG_INPUT_ACCEL_X)] = (uint16_t)rawX;
+    regInput[regInpIx(REG_INPUT_ACCEL_Y)] = (uint16_t)rawY;
+    regInput[regInpIx(REG_INPUT_ACCEL_Z)] = (uint16_t)rawZ;
   }
 
   // Odczyt surowych danych żyroskopu
@@ -68,8 +68,8 @@ void accelerometerUpdate(void)
     rawZ = (int16_t)((data[4] << 8) | data[5]);
 
     // Zapis surowych wartości do rejestrów
-    regInput[regInpIx(REG_GYRO_X)] = (uint16_t)rawX;
-    regInput[regInpIx(REG_GYRO_Y)] = (uint16_t)rawY;
-    regInput[regInpIx(REG_GYRO_Z)] = (uint16_t)rawZ;
+    regInput[regInpIx(REG_INPUT_GYRO_X)] = (uint16_t)rawX;
+    regInput[regInpIx(REG_INPUT_GYRO_Y)] = (uint16_t)rawY;
+    regInput[regInpIx(REG_INPUT_GYRO_Z)] = (uint16_t)rawZ;
   }
 }

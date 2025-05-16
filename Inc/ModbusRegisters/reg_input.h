@@ -76,19 +76,19 @@
 #define REG_INPUT_ELEV_CURRENT 0x3014
 
 //! uint16_t, ±2g (LSB/g: 16 384)
-// raw = regInput[regInpIx(REG_ACCEL_X)] 
+// raw = regInput[regInpIx(REG_INPUT_ACCEL_X)] 
 // acc_g = raw / 16384.0f;       -> w jednostkach g
 // acc_ms2 = acc_g * 9.81f;      -> w m/s²
-#define REG_ACCEL_X 0x3016
-#define REG_ACCEL_Y 0x3018
-#define REG_ACCEL_Z 0x301A
+#define REG_INPUT_ACCEL_X 0x3016
+#define REG_INPUT_ACCEL_Y 0x3018
+#define REG_INPUT_ACCEL_Z 0x301A
 
 //! uint16_t, ±250°/s (LSB/°/s: 131)
-// raw = regInput[regInpIx(REG_GYRO_X)];
+// raw = regInput[regInpIx(REG_INPUT_GYRO_X)];
 // gyro_dps = raw / 131.0f;      -> w stopniach na sekundę
-#define REG_GYRO_X 0x301C
-#define REG_GYRO_Y 0x301E
-#define REG_GYRO_Z 0x3020
+#define REG_INPUT_GYRO_X 0x301C
+#define REG_INPUT_GYRO_Y 0x301E
+#define REG_INPUT_GYRO_Z 0x3020
 
 ////////////////////////////////////////////////////////////////////////////////
 
