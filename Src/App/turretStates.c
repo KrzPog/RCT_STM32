@@ -45,7 +45,7 @@ void activateTurret(void)
     if (regInput[regInpIx(REG_INPUT_ERROR)])
         return;
 
-    HAL_GPIO_WritePin(TURRET_STATE_LAMP_GPIO_Port, TURRET_STATE_LAMP_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(TURRET_LAMP_GPIO_Port, TURRET_LAMP_Pin, GPIO_PIN_SET);
     regInput[regInpIx(REG_INPUT_STATUS_WORD)] |= REG_INPUT_STATUS_WORD_BIT_ACTIVATED;
 }
 
@@ -112,13 +112,13 @@ void stateLampUpdate(void)
     switch (regInput[regInpIx(REG_INPUT_STATUS_WORD)] & (REG_INPUT_STATUS_WORD_BIT_FAULT | REG_INPUT_STATUS_WORD_BIT_ACTIVATED))
     {
     case REG_INPUT_STATUS_WORD_BIT_FAULT:
-        HAL_GPIO_TogglePin(TURRET_STATE_LAMP_GPIO_Port, TURRET_STATE_LAMP_Pin);
+        HAL_GPIO_TogglePin(TURRET_LAMP_GPIO_Port, TURRET_LAMP_Pin);
         break;
     case REG_INPUT_STATUS_WORD_BIT_ACTIVATED:
-        HAL_GPIO_WritePin(TURRET_STATE_LAMP_GPIO_Port, TURRET_STATE_LAMP_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(TURRET_LAMP_GPIO_Port, TURRET_LAMP_Pin, GPIO_PIN_SET);
         break;
     case 0:
-        HAL_GPIO_WritePin(TURRET_STATE_LAMP_GPIO_Port, TURRET_STATE_LAMP_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(TURRET_LAMP_GPIO_Port, TURRET_LAMP_Pin, GPIO_PIN_RESET);
         break;
     }
 }

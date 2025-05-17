@@ -4,7 +4,7 @@
 
 UART_HandleTypeDef *bt_uart;
 
-uint8_t Buffer_APP_BT[COMM_BUFFER_SIZE];
+uint8_t Buffer_APP_BT[COMMS_BUFFER_SIZE];
 uint8_t Buffer_BT_APP[1];
 uint8_t Buffer_APP_USB[1];
 

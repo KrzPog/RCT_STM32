@@ -5,7 +5,7 @@ Encoder elev_motor_encoder;
 
 void encodersInit(void)
 {
-    rot_motor_encoder.pTim = &htim2;
+    rot_motor_encoder.pTim = &htim3;
     elev_motor_encoder.pTim = &htim4;
 
     rot_motor_encoder.pPosReg = (int16_t *)&regInput[regInpIx(REG_INPUT_ROT_POSITION)];

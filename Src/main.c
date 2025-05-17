@@ -111,6 +111,9 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM4_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM5_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   initRegInput();
@@ -118,7 +121,7 @@ int main(void)
 
 #if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
   eMBErrorCode eStatus;
-  eStatus = eMBInit(MB_RTU, MODBUS_SLAVE_ID, &huart1, BLUETOOTH_DATA_BPS, &htim11);
+  eStatus = eMBInit(MB_RTU, MODBUS_SLAVE_ID, &huart1, BLUETOOTH_USART_BPS, &htim11);
   eStatus = eMBSetSlaveID(MODBUS_SLAVE_ID, TRUE, NULL, 0);
   eStatus = eMBEnable();
 #else

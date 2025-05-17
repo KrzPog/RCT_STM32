@@ -9,7 +9,7 @@
 
 extern UART_HandleTypeDef *bt_uart;
 
-extern uint8_t Buffer_APP_BT[COMM_BUFFER_SIZE];
+extern uint8_t Buffer_APP_BT[COMMS_BUFFER_SIZE];
 
 void USR_BT_INIT(UART_HandleTypeDef *huart);
 void USR_BT_RX_Complete(UART_HandleTypeDef *huart);
