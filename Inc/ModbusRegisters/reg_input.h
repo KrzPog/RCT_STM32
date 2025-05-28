@@ -53,8 +53,8 @@
 #define REG_INPUT_ACCEL_Z 0x301A
 
 //! uint16_t, ±250°/s (LSB/°/s: 131)
-// raw = regInput[regInpIx(REG_INPUT_GYRO_X)];
-// gyro_dps = raw / 131.0f;      -> w stopniach na sekundę
+//! raw = regInput[regInpIx(REG_INPUT_GYRO_X)];
+//! gyro_dps = raw / 131.0f;      -> w stopniach na sekundę
 #define REG_INPUT_GYRO_X 0x301C
 #define REG_INPUT_GYRO_Y 0x301E
 #define REG_INPUT_GYRO_Z 0x3020

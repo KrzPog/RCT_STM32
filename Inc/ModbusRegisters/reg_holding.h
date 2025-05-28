@@ -17,41 +17,75 @@
 #define REG_HOLDING_CONTROL_WORD_BIT_SHOOT 0x0008        //!< Bit 3: Shoot ( impulse start shooting or stop depending on current state )
 #define REG_HOLDING_CONTROL_WORD_BIT_FLASH_UNLOCK 0x0010 //!< Bit 4: Unlock flash ( set back to 0 after unlocking )
 
+//! int16, in degrees with base 10, limited by REG_FLASH_ROT_POSITION_MIN and REG_FLASH_ROT_POSITION_MAX
+#define REG_HOLDING_ROT_TARGET_POSITION 0x4002
+
+//! int16, in degrees with base 10, limited by REG_FLASH_ELEV_POSITION_MIN and REG_FLASH_ELEV_POSITION_MAX
+#define REG_HOLDING_ELEV_TARGET_POSITION 0x4004
+
+//! int16, in degrees per second with base 10, limited by REG_FLASH_ROT_SPEED_MIN and REG_FLASH_ROT_SPEED_MAX
+//! ( both signs supported )
+#define REG_HOLDING_ROT_TARGET_SPEED 0x4006
+
+//! int16, in degrees per second with base 10, limited by REG_FLASH_ELEV_SPEED_MIN and REG_FLASH_ELEV_SPEED_MAX
+//! ( both signs supported )
+#define REG_HOLDING_ELEV_TARGET_SPEED 0x4008
+
 ////////////////////////////////////////////////////////////////////////////////
 
-#define REG_FLASH_OPEN_LOOP_MODE 0x5000 //!< uint16, 0 - closed loop, 1 - open loop
+#define REG_FLASH_CONTROL_MODE 0x5000
+#define REG_FLASH_CONTROL_MODE_BIT_PID_EN 0x0001       //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
+#define REG_FLASH_CONTROL_MODE_BIT_PID_TYPE 0x0002     //!< Bit 1: 1 - Position control, 0 - Speed control
+#define REG_FLASH_CONTROL_MODE_BIT_ROT_CONTROL 0x0004  //!< Bit 2: 1 - UART control, 0 - PWM control
+#define REG_FLASH_CONTROL_MODE_BIT_ELEV_CONTROL 0x0008 //!< Bit 3: 1 - UART control, 0 - PWM control
 
-#define REG_FLASH_ROT_POSITION_MIN 0x5002 //!< int16, in deegrees with base 10, min -3600, max 3600
+//! int16, in degrees with base 10, min -3600, max 3600
+#define REG_FLASH_ROT_POSITION_MIN 0x5002
 
-#define REG_FLASH_ROT_POSITION_MAX 0x5004 //!< int16, in deegrees with base 10, min -3600, max 3600
+//! int16, in degrees with base 10, min -3600, max 3600
+#define REG_FLASH_ROT_POSITION_MAX 0x5004
 
-#define REG_FLASH_ELEV_POSITION_MIN 0x5006 //!< int16, in deegrees with base 10, min -3600, max 3600
+//! int16, in degrees with base 10, min -3600, max 3600
+#define REG_FLASH_ELEV_POSITION_MIN 0x5006
 
-#define REG_FLASH_ELEV_POSITION_MAX 0x5008 //!< int16, in deegrees with base 10, min -3600, max 3600
+//! int16, in degrees with base 10, min -3600, max 3600
+#define REG_FLASH_ELEV_POSITION_MAX 0x5008
 
-#define REG_FLASH_ROT_SPEED_MIN 0x500A //!< uint16, in degrees per second with base 10, min 0
+//! uint16, in degrees per second with base 10, min 0
+#define REG_FLASH_ROT_SPEED_MIN 0x500A
 
-#define REG_FLASH_ROT_SPEED_MAX 0x500C //!< uint16, in degrees per second with base 10, min 0
+//! uint16, in degrees per second with base 10, min 0
+#define REG_FLASH_ROT_SPEED_MAX 0x500C
 
-#define REG_FLASH_ELEV_SPEED_MIN 0x500E //!< uint16, in degrees per second with base 10, min 0
+//! uint16, in degrees per second with base 10, min 0
+#define REG_FLASH_ELEV_SPEED_MIN 0x500E
 
-#define REG_FLASH_ELEV_SPEED_MAX 0x5010 //!< uint16, in degrees per second with base 10, min 0
+//! uint16, in degrees per second with base 10, min 0
+#define REG_FLASH_ELEV_SPEED_MAX 0x5010
 
-#define REG_FLASH_ROT_DUTY_PWM_MIN 0x5012 //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ROT_DUTY_PWM_MIN 0x5012
 
-#define REG_FLASH_ROT_DUTY_PWM_MAX 0x5014 //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ROT_DUTY_PWM_MAX 0x5014
 
-#define REG_FLASH_ELEV_DUTY_PWM_MIN 0x5016 //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ELEV_DUTY_PWM_MIN 0x5016
 
-#define REG_FLASH_ELEV_DUTY_PWM_MAX 0x5018 //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ELEV_DUTY_PWM_MAX 0x5018
 
-#define REG_FLASH_ROT_UART_SPEED_MIN 0x501A //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ROT_UART_SPEED_MIN 0x501A
 
-#define REG_FLASH_ROT_UART_SPEED_MAX 0x501C //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ROT_UART_SPEED_MAX 0x501C
 
-#define REG_FLASH_ELEV_UART_SPEED_MIN 0x501E //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ELEV_UART_SPEED_MIN 0x501E
 
-#define REG_FLASH_ELEV_UART_SPEED_MAX 0x5020 //!< uint16, in percent with base 10, min 0, max 1000
+//! uint16, in percent with base 10, min 0, max 1000
+#define REG_FLASH_ELEV_UART_SPEED_MAX 0x5020
 
 ////////////////////////////////////////////////////////////////////////////////
 
