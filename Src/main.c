@@ -118,6 +118,7 @@ int main(void)
 
   initRegInput();
   initRegHolding();
+  initRegFlash();
 
 #if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
   eMBErrorCode eStatus;
