@@ -10,7 +10,7 @@ void initRegHolding(void)
 void initRegFlash(void)
 {
     //! @todo replace it with real flash reading
-    regFlash[regFlashIx(REG_FLASH_OPEN_LOOP_MODE)] = 1;       // PID Enabled
+    // regFlash[regFlashIx(REG_FLASH_OPEN_LOOP_MODE)] = 0;       // PID Enabled
     regFlash[regFlashIx(REG_FLASH_ROT_POSITION_MIN)] = -3600; // -360.0 degrees
     regFlash[regFlashIx(REG_FLASH_ROT_POSITION_MAX)] = 3600;  // 360.0 degrees
     regFlash[regFlashIx(REG_FLASH_ELEV_POSITION_MIN)] = -900; // -90.0 degrees
