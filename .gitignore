@@ -217,3 +217,9 @@ release
 *.su
 *.idb
 *.pdb
+
+
+### Own gitignore entries
+
+
+**/Backup/

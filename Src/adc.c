@@ -127,10 +127,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = BATTERY_FOLTAGE_Pin;
+    GPIO_InitStruct.Pin = BATTERY_VOLTAGE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BATTERY_FOLTAGE_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(BATTERY_VOLTAGE_GPIO_Port, &GPIO_InitStruct);
 
     /* ADC1 DMA Init */
     /* ADC1 Init */
@@ -176,7 +176,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     */
     HAL_GPIO_DeInit(GPIOA, LAMP_CURRENT_Pin|RELOAD_CURRENT_Pin|TRIGGER_CURRENT_Pin);
 
-    HAL_GPIO_DeInit(BATTERY_FOLTAGE_GPIO_Port, BATTERY_FOLTAGE_Pin);
+    HAL_GPIO_DeInit(BATTERY_VOLTAGE_GPIO_Port, BATTERY_VOLTAGE_Pin);
 
     /* ADC1 DMA DeInit */
     HAL_DMA_DeInit(adcHandle->DMA_Handle);
