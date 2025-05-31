@@ -84,17 +84,17 @@ const osThreadAttr_t task_checkIfTimeout_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for task_PIDCalculate_motor1 */
-osThreadId_t task_PIDCalculate_motor1Handle;
-const osThreadAttr_t task_PIDCalculate_motor1_attributes = {
-  .name = "task_PIDCalculate_motor1",
+/* Definitions for task_PIDCalculate_Rot */
+osThreadId_t task_PIDCalculate_RotHandle;
+const osThreadAttr_t task_PIDCalculate_Rot_attributes = {
+  .name = "task_PIDCalculate_Rot",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
-/* Definitions for task_PIDCalculate_motor2 */
-osThreadId_t task_PIDCalculate_motor2Handle;
-const osThreadAttr_t task_PIDCalculate_motor2_attributes = {
-  .name = "task_PIDCalculate_motor2",
+/* Definitions for task_PIDCalculate_Elev */
+osThreadId_t task_PIDCalculate_ElevHandle;
+const osThreadAttr_t task_PIDCalculate_Elev_attributes = {
+  .name = "task_PIDCalculate_Elev",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
@@ -129,8 +129,8 @@ void taskInit_encodersUpdate(void *argument);
 void taskInit_stateLampUpdate(void *argument);
 void taskInit_pollModbus(void *argument);
 void taskInit_checkIfTimeout(void *argument);
-void taskInit_PIDCalculate_motor1(void *argument);
-void taskInit_PIDCalculate_motor2(void *argument);
+void taskInit_PIDCalculate_Rot(void *argument);
+void taskInit_PIDCalculate_Elev(void *argument);
 void taskInit_debugUSBPrint(void *argument);
 void taskInit_checkAccelValues(void *argument);
 void taskInit_checkAnalogSensorsData(void *argument);
@@ -177,11 +177,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of task_checkIfTimeout */
   task_checkIfTimeoutHandle = osThreadNew(taskInit_checkIfTimeout, NULL, &task_checkIfTimeout_attributes);
 
-  /* creation of task_PIDCalculate_motor1 */
-  task_PIDCalculate_motor1Handle = osThreadNew(taskInit_PIDCalculate_motor1, NULL, &task_PIDCalculate_motor1_attributes);
+  /* creation of task_PIDCalculate_Rot */
+  task_PIDCalculate_RotHandle = osThreadNew(taskInit_PIDCalculate_Rot, NULL, &task_PIDCalculate_Rot_attributes);
 
-  /* creation of task_PIDCalculate_motor2 */
-  task_PIDCalculate_motor2Handle = osThreadNew(taskInit_PIDCalculate_motor2, NULL, &task_PIDCalculate_motor2_attributes);
+  /* creation of task_PIDCalculate_Elev */
+  task_PIDCalculate_ElevHandle = osThreadNew(taskInit_PIDCalculate_Elev, NULL, &task_PIDCalculate_Elev_attributes);
 
   /* creation of task_debugUSBPrint */
   task_debugUSBPrintHandle = osThreadNew(taskInit_debugUSBPrint, NULL, &task_debugUSBPrint_attributes);
@@ -221,9 +221,9 @@ void taskInit_encodersUpdate(void *argument)
   for (;;)
   {
     if (encoderUpdate((Encoder *)&rot_motor_encoder))
-      vTaskResume(task_PIDCalculate_motor1Handle);
+      vTaskResume(task_PIDCalculate_RotHandle);
     if (encoderUpdate((Encoder *)&elev_motor_encoder))
-      vTaskResume(task_PIDCalculate_motor2Handle);
+      vTaskResume(task_PIDCalculate_ElevHandle);
     osDelay(ENCODER_SAMPLING_TIME_MS / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_encodersUpdate */
@@ -243,7 +243,7 @@ void taskInit_stateLampUpdate(void *argument)
   for (;;)
   {
     stateLampUpdate();
-    osDelay(LAMP_SWITCHING_WHEN_FAULT_MS / portTICK_RATE_MS);
+    osDelay(LAMP_SWITCHING_PERIOD_MS / 2 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_stateLampUpdate */
 }
@@ -290,40 +290,40 @@ void taskInit_checkIfTimeout(void *argument)
   /* USER CODE END taskInit_checkIfTimeout */
 }
 
-/* USER CODE BEGIN Header_taskInit_PIDCalculate_motor1 */
+/* USER CODE BEGIN Header_taskInit_PIDCalculate_Rot */
 /**
- * @brief Function implementing the task_PIDCalculate_motor1 thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_taskInit_PIDCalculate_motor1 */
-void taskInit_PIDCalculate_motor1(void *argument)
+* @brief Function implementing the task_PIDCalculate_Rot thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_taskInit_PIDCalculate_Rot */
+void taskInit_PIDCalculate_Rot(void *argument)
 {
-  /* USER CODE BEGIN taskInit_PIDCalculate_motor1 */
+  /* USER CODE BEGIN taskInit_PIDCalculate_Rot */
   /* Infinite loop */
-  for (;;)
+  for(;;)
   {
-    vTaskSuspend(NULL); //!< @todo implement PID calculation
+    osDelay(1);
   }
-  /* USER CODE END taskInit_PIDCalculate_motor1 */
+  /* USER CODE END taskInit_PIDCalculate_Rot */
 }
 
-/* USER CODE BEGIN Header_taskInit_PIDCalculate_motor2 */
+/* USER CODE BEGIN Header_taskInit_PIDCalculate_Elev */
 /**
- * @brief Function implementing the task_PIDCalculate_motor2 thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_taskInit_PIDCalculate_motor2 */
-void taskInit_PIDCalculate_motor2(void *argument)
+* @brief Function implementing the task_PIDCalculate_Elev thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_taskInit_PIDCalculate_Elev */
+void taskInit_PIDCalculate_Elev(void *argument)
 {
-  /* USER CODE BEGIN taskInit_PIDCalculate_motor2 */
+  /* USER CODE BEGIN taskInit_PIDCalculate_Elev */
   /* Infinite loop */
-  for (;;)
+  for(;;)
   {
-    vTaskSuspend(NULL); //!< @todo implement PID calculation
+    osDelay(1);
   }
-  /* USER CODE END taskInit_PIDCalculate_motor2 */
+  /* USER CODE END taskInit_PIDCalculate_Elev */
 }
 
 /* USER CODE BEGIN Header_taskInit_debugUSBPrint */

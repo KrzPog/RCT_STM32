@@ -15,6 +15,7 @@
         "cstdint": "c",
         "encoders.h": "c",
         "gpio.h": "c",
-        "stm32f4xx_it.h": "c"
+        "stm32f4xx_it.h": "c",
+        "reg_holding.h": "c"
     }
 }

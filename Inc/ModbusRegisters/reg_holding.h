@@ -5,7 +5,7 @@
 #define REG_HOLDING_COUNT 1
 
 #define REG_FLASH_START 0x5000
-#define REG_FLASH_COUNT 17
+#define REG_FLASH_COUNT 18 //!< Need to be even, because registers are 16-bit and Flash is minimum 32-bit (Word)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,59 +33,69 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define REG_FLASH_CONTROL_MODE 0x5000
-#define REG_FLASH_CONTROL_MODE_BIT_PID_EN 0x0001       //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
-#define REG_FLASH_CONTROL_MODE_BIT_PID_TYPE 0x0002     //!< Bit 1: 1 - Position control, 0 - Speed control
-#define REG_FLASH_CONTROL_MODE_BIT_ROT_CONTROL 0x0004  //!< Bit 2: 1 - UART control, 0 - PWM control
-#define REG_FLASH_CONTROL_MODE_BIT_ELEV_CONTROL 0x0008 //!< Bit 3: 1 - UART control, 0 - PWM control
+#define REG_FLASH_ROT_CONFIG 0x5000
+#define REG_FLASH_ROG_CONFIG_BIT_PID_EN 0x0001      //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
+#define REG_FLASH_ROT_CONFIG_BIT_PID_TYPE 0x0002    //!< Bit 1: 1 - Position control, 0 - Speed control
+#define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL 0x000C //!< Bits 2-3: 11 - UART, 10 - PPM, 01 - PWM
+#define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART 0x000C
+#define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PPM 0x0008
+#define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM 0x0004
+
+#define REG_FLASH_ELEV_CONFIG 0x5002
+#define REG_FLASH_ELEV_CONFIG_BIT_PID_EN 0x0001      //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
+#define REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE 0x0002    //!< Bit 1: 1 - Position control, 0 - Speed control
+#define REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL 0x000C //!< Bits 2-3: 11 - UART, 10 - PPM, 01 - PWM
+#define REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART 0x000C
+#define REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PPM 0x0008
+#define REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM 0x0004
 
 //! int16, in degrees with base 10, min -3600, max 3600
-#define REG_FLASH_ROT_POSITION_MIN 0x5002
+#define REG_FLASH_ROT_POSITION_MIN 0x5004
 
 //! int16, in degrees with base 10, min -3600, max 3600
-#define REG_FLASH_ROT_POSITION_MAX 0x5004
+#define REG_FLASH_ROT_POSITION_MAX 0x5006
 
 //! int16, in degrees with base 10, min -3600, max 3600
-#define REG_FLASH_ELEV_POSITION_MIN 0x5006
+#define REG_FLASH_ELEV_POSITION_MIN 0x5008
 
 //! int16, in degrees with base 10, min -3600, max 3600
-#define REG_FLASH_ELEV_POSITION_MAX 0x5008
+#define REG_FLASH_ELEV_POSITION_MAX 0x500A
 
 //! uint16, in degrees per second with base 10, min 0
-#define REG_FLASH_ROT_SPEED_MIN 0x500A
+#define REG_FLASH_ROT_SPEED_MIN 0x500C
 
 //! uint16, in degrees per second with base 10, min 0
-#define REG_FLASH_ROT_SPEED_MAX 0x500C
+#define REG_FLASH_ROT_SPEED_MAX 0x500E
 
 //! uint16, in degrees per second with base 10, min 0
-#define REG_FLASH_ELEV_SPEED_MIN 0x500E
+#define REG_FLASH_ELEV_SPEED_MIN 0x5010
 
 //! uint16, in degrees per second with base 10, min 0
-#define REG_FLASH_ELEV_SPEED_MAX 0x5010
+#define REG_FLASH_ELEV_SPEED_MAX 0x5012
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ROT_DUTY_PWM_MIN 0x5012
+#define REG_FLASH_ROT_DUTY_PWM_MIN 0x5014
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ROT_DUTY_PWM_MAX 0x5014
+#define REG_FLASH_ROT_DUTY_PWM_MAX 0x5016
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ELEV_DUTY_PWM_MIN 0x5016
+#define REG_FLASH_ELEV_DUTY_PWM_MIN 0x5018
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ELEV_DUTY_PWM_MAX 0x5018
+#define REG_FLASH_ELEV_DUTY_PWM_MAX 0x501A
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ROT_UART_SPEED_MIN 0x501A
+#define REG_FLASH_ROT_UART_SPEED_MIN 0x501C
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ROT_UART_SPEED_MAX 0x501C
+#define REG_FLASH_ROT_UART_SPEED_MAX 0x501E
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ELEV_UART_SPEED_MIN 0x501E
+#define REG_FLASH_ELEV_UART_SPEED_MIN 0x5020
 
 //! uint16, in percent with base 10, min 0, max 1000
-#define REG_FLASH_ELEV_UART_SPEED_MAX 0x5020
+#define REG_FLASH_ELEV_UART_SPEED_MAX 0x5022
 
 ////////////////////////////////////////////////////////////////////////////////
 

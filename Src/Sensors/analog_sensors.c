@@ -44,10 +44,10 @@ void analogSensorsUpdate(void)
     }
     
     // Przypisz wartości do rejestrów Modbus
-    regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)] = local_adc_values[0];
-    regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)] = local_adc_values[1];
-    regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)] = local_adc_values[2];
-    regInput[regInpIx(REG_INPUT_LAMP_CURRENT)] = local_adc_values[3];
+    regInput[regInpIx(REG_INPUT_LAMP_CURRENT)] = local_adc_values[0];
+    regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)] = local_adc_values[1];
+    regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)] = local_adc_values[2];
+    regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)] = local_adc_values[3];
     
     // Rozpocznij kolejną konwersję
     Start_ADC_Conversion();

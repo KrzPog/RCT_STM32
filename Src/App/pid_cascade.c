@@ -67,8 +67,8 @@ void cascadePidInitMotor(MotorID motorId)
                         speedParams->integralMax);
     
     // Set default control mode based on flash register
-    uint16_t controlMode = regFlash[regFlashIx(REG_FLASH_CONTROL_MODE)];
-    cascade->positionControlEnabled = (controlMode & REG_FLASH_CONTROL_MODE_BIT_PID_TYPE) != 0;
+    uint16_t controlMode = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)];
+    cascade->positionControlEnabled = (controlMode & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE) != 0;
     
     cascade->isActive = false;
     
@@ -221,8 +221,8 @@ void cascadePidReset(MotorID motorId)
 void cascadePidLoadParametersFromFlash(void)
 {
     // Update control modes from flash
-    uint16_t controlMode = regFlash[regFlashIx(REG_FLASH_CONTROL_MODE)];
-    bool positionControl = (controlMode & REG_FLASH_CONTROL_MODE_BIT_PID_TYPE) != 0;
+    uint16_t controlMode = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)];
+    bool positionControl = (controlMode & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE) != 0;
     
     for (MotorID motorId = 0; motorId < MOTOR_COUNT; motorId++) {
         cascadePidSetControlMode(motorId, positionControl);

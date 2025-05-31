@@ -4,8 +4,6 @@ uint16_t regInput[REG_INPUT_COUNT] = {0};
 
 void initRegInput(void)
 {
-    regInput[regInpIx(REG_INPUT_COMM_MODE)] = COMM_MODE;
-
     //! @note turret activated by default, can be changed in the future
     activateTurret();
 }
