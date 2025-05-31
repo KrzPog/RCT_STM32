@@ -1,7 +1,9 @@
 #include "ModbusRegisters/reg_holding.h"
 
 uint16_t regHolding[REG_HOLDING_COUNT] = {0};
-uint16_t regFlash[REG_FLASH_COUNT] = {0};
+uint16_t regFlash[DATAFLASH_REG_FLASH_SIZE / 2] = {0};
+
+__attribute__((section(".dataflash"), used)) const uint8_t dummy_regFlash[DATAFLASH_REG_FLASH_SIZE]; //!< @note Do not use or modify, dummy variable for linker to see DATAFLASH section
 
 void initRegHolding(void)
 {
@@ -9,24 +11,8 @@ void initRegHolding(void)
 
 void initRegFlash(void)
 {
-    //! @todo replace it with real flash reading
-    // regFlash[regFlashIx(REG_FLASH_OPEN_LOOP_MODE)] = 0;       // PID Enabled
-    regFlash[regFlashIx(REG_FLASH_ROT_POSITION_MIN)] = -3600; // -360.0 degrees
-    regFlash[regFlashIx(REG_FLASH_ROT_POSITION_MAX)] = 3600;  // 360.0 degrees
-    regFlash[regFlashIx(REG_FLASH_ELEV_POSITION_MIN)] = -900; // -90.0 degrees
-    regFlash[regFlashIx(REG_FLASH_ELEV_POSITION_MAX)] = 900;  // 90.0 degrees
-    regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)] = 0;        // 0 degrees per second
-    regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)] = 600;      // 60.0 degrees per second
-    regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)] = 0;       // 0 degrees per second
-    regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)] = 600;     // 60.0 degrees per second
-    regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MIN)] = 0;     // 0 percent
-    regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] = 1000;  // 100.0 percent
-    regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MIN)] = 0;    // 0 percent
-    regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] = 1000; // 100.0 percent
-    regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MIN)] = 0;   // 0 percent
-    regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MAX)] = 0xFFFF;
-    regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MIN)] = 0;      // 0 percent
-    regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MAX)] = 0xFFFF; // 100.0 percent
+    uint32_t *data = (uint32_t *)regFlash;
+    readDataFlash(0, data, DATAFLASH_REG_FLASH_SIZE / 4);
 }
 
 eMBErrorCode eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode)
@@ -87,7 +73,13 @@ eMBErrorCode eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRe
             regFlash[index] = (pucRegBuffer[0] << 8) | pucRegBuffer[1];
             pucRegBuffer += 2;
         }
+
+        // Write to flash memory
+        uint32_t *data = (uint32_t *)regFlash;
+        if (!writeDataFlash(0, data, DATAFLASH_REG_FLASH_SIZE / 4))
+            return MB_EILLSTATE; // Flash write failed
     }
+
     checkControlWord();
 
     return MB_ENOERR;

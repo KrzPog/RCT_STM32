@@ -5,7 +5,7 @@
 #define REG_HOLDING_COUNT 1
 
 #define REG_FLASH_START 0x5000
-#define REG_FLASH_COUNT 18 //!< Need to be even, because registers are 16-bit and Flash is minimum 32-bit (Word)
+#define REG_FLASH_COUNT 18
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -103,6 +103,10 @@
 
 #define regFlashIx(x) ((x - REG_FLASH_START) / 2)
 
+///////////////////////////////////////////////////////////////////////////// //! @file reg_holding.h
+
+#define DATAFLASH_REG_FLASH_SIZE ALIGN4((REG_FLASH_COUNT) * 2) //!< Required for linker to see REG_FLASH in DATAFLASH section
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdbool.h>
@@ -110,11 +114,12 @@
 
 #include "mb.h"
 #include "main.h"
+#include "App/dataFlash.h"
 #include "App/turretStates.h"
 #include "ModbusRegisters/reg_input.h"
 
 extern uint16_t regHolding[REG_HOLDING_COUNT];
-extern uint16_t regFlash[REG_FLASH_COUNT];
+extern uint16_t regFlash[DATAFLASH_REG_FLASH_SIZE / 2];
 
 void initRegHolding(void);
 void initRegFlash(void);

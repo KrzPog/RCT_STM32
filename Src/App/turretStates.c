@@ -29,6 +29,12 @@ void checkControlWord(void)
         shootTurretToggle();
         regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_SHOOT;
     }
+
+    if (regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] & REG_HOLDING_CONTROL_WORD_BIT_FLASH_UNLOCK)
+    {
+        regHolding[regHoldIx(REG_HOLDING_CONTROL_WORD)] &= ~REG_HOLDING_CONTROL_WORD_BIT_FLASH_UNLOCK;
+        regInput[regInpIx(REG_INPUT_STATUS_WORD)] ^= REG_INPUT_STATUS_WORD_BIT_FLASH_UNLOCKED;
+    }
 }
 
 void activateTurret(void)
