@@ -8,6 +8,12 @@ void encodersInit(void)
     rot_motor_encoder.pTim = &htim3;
     elev_motor_encoder.pTim = &htim4;
 
+    __HAL_TIM_SET_COMPARE(rot_motor_encoder.pTim, TIM_CHANNEL_3, 4 * regFlash[regFlashIx(REG_FLASH_ROT_ENCODER_PPR)]);
+    __HAL_TIM_SET_COMPARE(rot_motor_encoder.pTim, TIM_CHANNEL_4, 0xFFFF - (4 * regFlash[regFlashIx(REG_FLASH_ROT_ENCODER_PPR)]) + 1);
+
+    __HAL_TIM_SET_COMPARE(elev_motor_encoder.pTim, TIM_CHANNEL_3, 4 * regFlash[regFlashIx(REG_FLASH_ELEV_ENCODER_PPR)]);
+    __HAL_TIM_SET_COMPARE(elev_motor_encoder.pTim, TIM_CHANNEL_4, 0xFFFF - (4 * regFlash[regFlashIx(REG_FLASH_ELEV_ENCODER_PPR)]) + 1);
+
     rot_motor_encoder.pPosReg = (int16_t *)&regInput[regInpIx(REG_INPUT_ROT_POSITION)];
     rot_motor_encoder.pSpeedReg = (int16_t *)&regInput[regInpIx(REG_INPUT_ROT_SPEED)];
 

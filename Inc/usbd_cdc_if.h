@@ -34,8 +34,6 @@
 
 #include "stdarg.h"
 
-#include "ExternalModules/bluetooth_XM_15B.h"
-
 /* USER CODE END INCLUDE */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY

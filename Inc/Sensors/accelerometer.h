@@ -4,6 +4,8 @@
 #include "main.h"
 #include "i2c.h"
 
+#define ACCELEROMETER_SAMPLING_TIME_MS 10   //!< Accelerometer update period in ms
+
 // Adres MPU6050 (AD0 podłączony do GND)
 #define MPU6050_ADDR 0xD0
 

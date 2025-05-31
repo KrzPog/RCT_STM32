@@ -95,18 +95,12 @@ BOOL xMBPortSerialPutByte(CHAR *ucByte)
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
     HAL_UART_Transmit_IT(hal_uart, (uint8_t *)ucByte, 1);
-#if (COMM_MODE & COMM_MODE_BIT_ECHO_APP_BT)
-    CDC_Transmit_FS((uint8_t *)ucByte, 1);
-#endif
     return TRUE;
 }
 
 BOOL xMBPortSerialPutBytes(CHAR *ucByte, USHORT usSize)
 {
     HAL_UART_Transmit_IT(hal_uart, (uint8_t *)ucByte, usSize);
-#if (COMM_MODE & COMM_MODE_BIT_ECHO_APP_BT)
-    CDC_Transmit_FS((uint8_t *)ucByte, usSize);
-#endif
     return TRUE;
 }
 
@@ -116,9 +110,6 @@ BOOL xMBPortSerialGetByte(CHAR *pucByte)
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
      */
     *pucByte = singleChar;
-#if (COMM_MODE & COMM_MODE_BIT_ECHO_BT_APP)
-    CDC_Transmit_FS(&singleChar, 1);
-#endif
     HAL_UART_Receive_IT(hal_uart, &singleChar, 1);
     return TRUE;
 }

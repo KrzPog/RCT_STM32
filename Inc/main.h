@@ -59,17 +59,15 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MODBUS_TIM_PRESCALER 95
 #define BLUETOOTH_USART_BPS 9600
-#define ELEV_ENCODER_RESOLUTION 20
-#define ROT_ENCODER_RESOLUTION 20
 #define ELEV_USART_BPS 9600
+#define MODBUS_TIM_PERIOD 49
+#define ELEV_PWM_PERIOD 999
+#define ELEV_PWM_PRESCALER 3
 #define COMMS_BUFFER_SIZE 128
+#define ROT_PWM_PERIOD 999
 #define IWDG_RELOAD 999
 #define ROT_USART_BPS 9600
-#define MODBUS_TIM_PERIOD 49
-#define ROT_PWM_PERIOD 999
 #define ROT_PWM_PRESCALER 3
-#define ELEV_PWM_PRESCALER 3
-#define ELEV_PWM_PERIOD 999
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0
@@ -127,20 +125,10 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
     ////////////////////////////////////////////////////////////////////////////////
-    //! Comm mode related defines
-
-#define COMM_MODE 0x06
-#define COMM_MODE_BIT_ECHO_USB_APP 0x01 // Echo every data USB->Application to USB
-#define COMM_MODE_BIT_ECHO_BT_APP 0x02  // Echo every data BT->Application to USB
-#define COMM_MODE_BIT_ECHO_APP_BT 0x04  // Echo every data Application->BT to USB
-#define COMM_MODE_BIT_FRWD_USB_BT 0x08  // Forward every data USB->BT
-
-    ////////////////////////////////////////////////////////////////////////////////
     //! Modbus related defines
 
 #define MODBUS_SLAVE_ID 0x01
-#define MODBUS_COMM_TIMEOUT_ERROR_MS 0xFFFFFFFF //!< @note set timeout if no modbus frame received
-#define LAMP_SWITCHING_PERIOD_MS 2000           //!< TURRET_LAMP toggling when fault detected
+#define MODBUS_TIMEOUT_ERROR_MS 0xFFFFFFFF //!< @note set timeout if no modbus frame received
 #define DEBUG_USB_PRINT_MS 250                  //!< USB print period in ms
 #define ELEV_UART_ENABLED 0
 

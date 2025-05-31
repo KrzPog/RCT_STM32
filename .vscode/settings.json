@@ -23,6 +23,8 @@
         "ranges": "c",
         "span": "c",
         "coroutine": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "main.h": "c",
+        "freertos.h": "c"
     }
 }

@@ -262,16 +262,6 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
 
-#if COMM_MODE & COMM_MODE_BIT_ECHO_USB_APP
-  // USR_Printf_USBD_CDC("%.*s", *Len, Buf);
-  CDC_Transmit_FS(Buf, *Len);
-#endif
-
-#if (COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
-  strncpy((char *)Buffer_APP_BT, (char *)Buf, *Len);
-  HAL_UART_Transmit_IT(bt_uart, Buffer_APP_BT, *Len);
-#endif
-
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);

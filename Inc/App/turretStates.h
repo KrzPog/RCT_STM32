@@ -3,8 +3,11 @@
 
 #include "main.h"
 #include "gpio.h"
+#include "freertos_tasks.h"
 #include "ModbusRegisters/reg_input.h"
 #include "ModbusRegisters/reg_holding.h"
+
+#define STATE_LED_SWITCHING_PERIOD_MS 100
 
 extern volatile uint32_t lastFrameReceivedTime;
 
@@ -22,6 +25,6 @@ void shootTurretToggle(void);
 
 void checkIfCommTimeout(void);
 
-void stateLampUpdate(void);
+void stateLEDUpdate(void);
 
 #endif

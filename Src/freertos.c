@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "usbd_cdc_if.h"
+#include "freertos_tasks.h"
 
 #include "App/turretStates.h"
 #include "ModbusRegisters/reg_input.h"
@@ -59,65 +60,72 @@
 /* Definitions for task_encodersUpdate */
 osThreadId_t task_encodersUpdateHandle;
 const osThreadAttr_t task_encodersUpdate_attributes = {
-  .name = "task_encodersUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_encodersUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
 };
-/* Definitions for task_stateLampUpdate */
-osThreadId_t task_stateLampUpdateHandle;
-const osThreadAttr_t task_stateLampUpdate_attributes = {
-  .name = "task_stateLampUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+/* Definitions for task_stateLEDUpdate */
+osThreadId_t task_stateLEDUpdateHandle;
+const osThreadAttr_t task_stateLEDUpdate_attributes = {
+    .name = "task_stateLEDUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for task_pollModbus */
 osThreadId_t task_pollModbusHandle;
 const osThreadAttr_t task_pollModbus_attributes = {
-  .name = "task_pollModbus",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+    .name = "task_pollModbus",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityBelowNormal,
 };
 /* Definitions for task_checkIfTimeout */
 osThreadId_t task_checkIfTimeoutHandle;
 const osThreadAttr_t task_checkIfTimeout_attributes = {
-  .name = "task_checkIfTimeout",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "task_checkIfTimeout",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for task_PIDCalculate_Rot */
 osThreadId_t task_PIDCalculate_RotHandle;
 const osThreadAttr_t task_PIDCalculate_Rot_attributes = {
-  .name = "task_PIDCalculate_Rot",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "task_PIDCalculate_Rot",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for task_PIDCalculate_Elev */
 osThreadId_t task_PIDCalculate_ElevHandle;
 const osThreadAttr_t task_PIDCalculate_Elev_attributes = {
-  .name = "task_PIDCalculate_Elev",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "task_PIDCalculate_Elev",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for task_debugUSBPrint */
 osThreadId_t task_debugUSBPrintHandle;
 const osThreadAttr_t task_debugUSBPrint_attributes = {
-  .name = "task_debugUSBPrint",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+    .name = "task_debugUSBPrint",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow,
 };
 /* Definitions for task_checkAccelValues */
 osThreadId_t task_checkAccelValuesHandle;
 const osThreadAttr_t task_checkAccelValues_attributes = {
-  .name = "task_checkAccelValues",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_checkAccelValues",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
 };
 /* Definitions for task_checkAnalogSensorsData */
 osThreadId_t task_checkAnalogSensorsDataHandle;
 const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
-  .name = "task_checkAnalogSensorsData",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal,
+    .name = "task_checkAnalogSensorsData",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal,
+};
+/* Definitions for task_shootingTimeLimit */
+osThreadId_t task_shootingTimeLimitHandle;
+const osThreadAttr_t task_shootingTimeLimit_attributes = {
+    .name = "task_shootingTimeLimit",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh7,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -126,7 +134,7 @@ const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void taskInit_encodersUpdate(void *argument);
-void taskInit_stateLampUpdate(void *argument);
+void taskInit_stateLEDUpdate(void *argument);
 void taskInit_pollModbus(void *argument);
 void taskInit_checkIfTimeout(void *argument);
 void taskInit_PIDCalculate_Rot(void *argument);
@@ -134,16 +142,18 @@ void taskInit_PIDCalculate_Elev(void *argument);
 void taskInit_debugUSBPrint(void *argument);
 void taskInit_checkAccelValues(void *argument);
 void taskInit_checkAnalogSensorsData(void *argument);
+void taskInit_shootingTimeLimit(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -168,8 +178,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of task_encodersUpdate */
   task_encodersUpdateHandle = osThreadNew(taskInit_encodersUpdate, NULL, &task_encodersUpdate_attributes);
 
-  /* creation of task_stateLampUpdate */
-  task_stateLampUpdateHandle = osThreadNew(taskInit_stateLampUpdate, NULL, &task_stateLampUpdate_attributes);
+  /* creation of task_stateLEDUpdate */
+  task_stateLEDUpdateHandle = osThreadNew(taskInit_stateLEDUpdate, NULL, &task_stateLEDUpdate_attributes);
 
   /* creation of task_pollModbus */
   task_pollModbusHandle = osThreadNew(taskInit_pollModbus, NULL, &task_pollModbus_attributes);
@@ -192,6 +202,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of task_checkAnalogSensorsData */
   task_checkAnalogSensorsDataHandle = osThreadNew(taskInit_checkAnalogSensorsData, NULL, &task_checkAnalogSensorsData_attributes);
 
+  /* creation of task_shootingTimeLimit */
+  task_shootingTimeLimitHandle = osThreadNew(taskInit_shootingTimeLimit, NULL, &task_shootingTimeLimit_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -199,7 +212,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_taskInit_encodersUpdate */
@@ -229,23 +241,23 @@ void taskInit_encodersUpdate(void *argument)
   /* USER CODE END taskInit_encodersUpdate */
 }
 
-/* USER CODE BEGIN Header_taskInit_stateLampUpdate */
+/* USER CODE BEGIN Header_taskInit_stateLEDUpdate */
 /**
- * @brief Function implementing the task_stateLampUpdate thread.
+ * @brief Function implementing the task_stateLEDUpdate thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_taskInit_stateLampUpdate */
-void taskInit_stateLampUpdate(void *argument)
+/* USER CODE END Header_taskInit_stateLEDUpdate */
+void taskInit_stateLEDUpdate(void *argument)
 {
-  /* USER CODE BEGIN taskInit_stateLampUpdate */
+  /* USER CODE BEGIN taskInit_stateLEDUpdate */
   /* Infinite loop */
   for (;;)
   {
-    stateLampUpdate();
-    osDelay(LAMP_SWITCHING_PERIOD_MS / 2 / portTICK_RATE_MS);
+    stateLEDUpdate();
+    osDelay(STATE_LED_SWITCHING_PERIOD_MS / portTICK_RATE_MS);
   }
-  /* USER CODE END taskInit_stateLampUpdate */
+  /* USER CODE END taskInit_stateLEDUpdate */
 }
 
 /* USER CODE BEGIN Header_taskInit_pollModbus */
@@ -261,9 +273,7 @@ void taskInit_pollModbus(void *argument)
   /* Infinite loop */
   for (;;)
   {
-#if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
     eMBPoll();
-#endif
     osDelay(1);
   }
   /* USER CODE END taskInit_pollModbus */
@@ -282,9 +292,7 @@ void taskInit_checkIfTimeout(void *argument)
   /* Infinite loop */
   for (;;)
   {
-#if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
     checkIfCommTimeout();
-#endif
     osDelay(500 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_checkIfTimeout */
@@ -292,36 +300,36 @@ void taskInit_checkIfTimeout(void *argument)
 
 /* USER CODE BEGIN Header_taskInit_PIDCalculate_Rot */
 /**
-* @brief Function implementing the task_PIDCalculate_Rot thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the task_PIDCalculate_Rot thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_taskInit_PIDCalculate_Rot */
 void taskInit_PIDCalculate_Rot(void *argument)
 {
   /* USER CODE BEGIN taskInit_PIDCalculate_Rot */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
-    osDelay(1);
+    vTaskSuspend(NULL);
   }
   /* USER CODE END taskInit_PIDCalculate_Rot */
 }
 
 /* USER CODE BEGIN Header_taskInit_PIDCalculate_Elev */
 /**
-* @brief Function implementing the task_PIDCalculate_Elev thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the task_PIDCalculate_Elev thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_taskInit_PIDCalculate_Elev */
 void taskInit_PIDCalculate_Elev(void *argument)
 {
   /* USER CODE BEGIN taskInit_PIDCalculate_Elev */
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
-    osDelay(1);
+    vTaskSuspend(NULL);
   }
   /* USER CODE END taskInit_PIDCalculate_Elev */
 }
@@ -365,7 +373,7 @@ void taskInit_checkAccelValues(void *argument)
   for (;;)
   {
     accelerometerUpdate();
-    osDelay(DEBUG_USB_PRINT_MS / portTICK_RATE_MS);
+    osDelay(ACCELEROMETER_SAMPLING_TIME_MS / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_checkAccelValues */
 }
@@ -384,13 +392,33 @@ void taskInit_checkAnalogSensorsData(void *argument)
   for (;;)
   {
     analogSensorsUpdate();
-    osDelay(DEBUG_USB_PRINT_MS / portTICK_RATE_MS);
+    osDelay(ANALOG_SAMPLING_TIME_MS / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_checkAnalogSensorsData */
+}
+
+/* USER CODE BEGIN Header_taskInit_shootingTimeLimit */
+/**
+ * @brief Function implementing the task_shootingTimeLimit thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_shootingTimeLimit */
+void taskInit_shootingTimeLimit(void *argument)
+{
+  /* USER CODE BEGIN taskInit_shootingTimeLimit */
+  /* Infinite loop */
+  for (;;)
+  {
+    vTaskSuspend(NULL);
+    osDelay(regFlash[regFlashIx(REG_FLASH_SHOOTING_TIME_LIMIT)] / portTICK_RATE_MS);
+    if (regInput[regInpIx(REG_INPUT_STATUS_WORD)] & REG_INPUT_STATUS_WORD_BIT_SHOOTING)
+      shootTurretToggle();
+  }
+  /* USER CODE END taskInit_shootingTimeLimit */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-

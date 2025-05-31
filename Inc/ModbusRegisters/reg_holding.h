@@ -5,7 +5,7 @@
 #define REG_HOLDING_COUNT 1
 
 #define REG_FLASH_START 0x5000
-#define REG_FLASH_COUNT 18
+#define REG_FLASH_COUNT 21
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +96,15 @@
 
 //! uint16, in percent with base 10, min 0, max 1000
 #define REG_FLASH_ELEV_UART_SPEED_MAX 0x5022
+
+//! uint16
+#define REG_FLASH_ROT_ENCODER_PPR 0x5024
+
+//! uint16
+#define REG_FLASH_ELEV_ENCODER_PPR 0x5026
+
+//! uint16, in milliseconds
+#define REG_FLASH_SHOOTING_TIME_LIMIT 0x5028
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -36,7 +36,6 @@
 #include "mb.h"
 #include "mbport.h"
 
-#include "ExternalModules/bluetooth_XM_15B.h"
 #include "ModbusRegisters/reg_input.h"
 
 /* USER CODE END Includes */
@@ -120,14 +119,10 @@ int main(void)
   initRegHolding();
   initRegFlash();
 
-#if !(COMM_MODE & COMM_MODE_BIT_FRWD_USB_BT)
   eMBErrorCode eStatus;
   eStatus = eMBInit(MB_RTU, MODBUS_SLAVE_ID, &huart1, BLUETOOTH_USART_BPS, &htim11);
   eStatus = eMBSetSlaveID(MODBUS_SLAVE_ID, TRUE, NULL, 0);
   eStatus = eMBEnable();
-#else
-  USR_BT_INIT(&huart1);
-#endif
 
   /* USER CODE END 2 */
 

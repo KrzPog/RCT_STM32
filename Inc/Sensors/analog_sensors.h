@@ -4,6 +4,8 @@
 #include "main.h"
 #include "adc.h"
 
+#define ANALOG_SAMPLING_TIME_MS 1   //!< Analog update period in ms
+
 // Stałe dla czujników
 #define VOLTAGE_DIVIDER_RATIO   7.58f    
 #define CURRENT_SENSOR_OFFSET   1.65f  
