@@ -30,6 +30,7 @@ extern "C" {
 
 /* USER CODE BEGIN Includes */
 
+#include "App/speedControl.h"
 #include "App/turretStates.h"
 
 /* USER CODE END Includes */

@@ -1,5 +1,8 @@
 #include "App/speedControl.h"
 
+bool elevLimitMinReached = false;
+bool elevLimitMaxReached = false;
+
 uint16_t rotControlConfig = 0;
 uint16_t elevControlConfig = 0;
 
@@ -82,14 +85,21 @@ void sendRotSpeedCV(void)
 void sendElevSpeedCV(void)
 {
     int16_t speedCV = getElevSpeedCV();
-    if (speedCV > 0 && speedCV < regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
-        speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
-    else if (speedCV < 0 && speedCV > -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
-        speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
-    else if (speedCV > regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
-        speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-    else if (speedCV < -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
-        speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+    if (elevLimitMinReached || elevLimitMaxReached)
+    {
+        speedCV = 0; // Stop the elevator if limits are reached
+    }
+    else
+    {
+        if (speedCV > 0 && speedCV < regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
+            speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
+        else if (speedCV < 0 && speedCV > -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
+            speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
+        else if (speedCV > regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
+            speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+        else if (speedCV < -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
+            speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+    }
 
     if (elevControlConfig == REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM)
     {

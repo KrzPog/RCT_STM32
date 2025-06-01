@@ -7,6 +7,9 @@
 #include "App/pid_output.h"
 #include "ModbusRegisters/reg_holding.h"
 
+extern bool elevLimitMinReached;
+extern bool elevLimitMaxReached;
+
 void initRotSpeedControl(void);
 void initElevSpeedControl(void);
 

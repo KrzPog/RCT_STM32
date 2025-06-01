@@ -94,7 +94,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : ELEV_LIMIT_MIN_Pin ELEV_LIMIT_MAX_Pin */
   GPIO_InitStruct.Pin = ELEV_LIMIT_MIN_Pin | ELEV_LIMIT_MAX_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -107,8 +107,30 @@ void MX_GPIO_Init(void)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin == DISABLE_SIGNAL_Pin)
+  GPIO_PinState pinState;
+
+  switch (GPIO_Pin)
+  {
+  case DISABLE_SIGNAL_Pin:
     deactivateTurret();
+    break;
+  case ELEV_LIMIT_MIN_Pin:
+    pinState = HAL_GPIO_ReadPin(ELEV_LIMIT_MIN_GPIO_Port, ELEV_LIMIT_MIN_Pin);
+    if (pinState == GPIO_PIN_RESET)
+      elevLimitMinReached = true; //!< Pull down logic
+    else
+      elevLimitMinReached = false;
+    break;
+  case ELEV_LIMIT_MAX_Pin:
+    pinState = HAL_GPIO_ReadPin(ELEV_LIMIT_MAX_GPIO_Port, ELEV_LIMIT_MAX_Pin);
+    if (pinState == GPIO_PIN_RESET)
+      elevLimitMaxReached = true; //!< Pull down logic
+    else
+      elevLimitMaxReached = false;
+    break;
+  default:
+    break;
+  }
 }
 
 /* USER CODE END 2 */
