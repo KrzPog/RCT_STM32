@@ -70,8 +70,12 @@ void sendRotSpeedCV(void)
 
     if (rotControlConfig == REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM)
     {
-        uint16_t pwmDuty = (uint32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
+        uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
         __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, pwmDuty);
+        if (speedCV > 0)
+            HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_SET);
+        else if (speedCV < 0)
+            HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_RESET);
     }
 
     else if (rotControlConfig == REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART)
@@ -103,8 +107,12 @@ void sendElevSpeedCV(void)
 
     if (elevControlConfig == REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM)
     {
-        uint16_t pwmDuty = (uint32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+        uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
         __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pwmDuty);
+        if (speedCV > 0)
+            HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_SET);
+        else if (speedCV < 0)
+            HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_RESET);
     }
 
 #if ELEV_UART_ENABLED
