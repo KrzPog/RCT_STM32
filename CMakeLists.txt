@@ -68,10 +68,7 @@ target_sources(${EXECUTABLE_NAME} PRIVATE
     # Add user sources here
     ${CMAKE_CURRENT_LIST_DIR}/Src/App/dataFlash.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/App/turretStates.c
-    ${CMAKE_CURRENT_LIST_DIR}/Src/App/pid_cascade.c
-    ${CMAKE_CURRENT_LIST_DIR}/Src/App/pid_output.c
-    ${CMAKE_CURRENT_LIST_DIR}/Src/App/pid_position.c
-    ${CMAKE_CURRENT_LIST_DIR}/Src/App/pid_speed.c
+    ${CMAKE_CURRENT_LIST_DIR}/Src/App/pid.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/App/speedControl.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_holding.c
     ${CMAKE_CURRENT_LIST_DIR}/Src/ModbusRegisters/reg_input.c

@@ -35,6 +35,7 @@
 #include "Sensors/encoders.h"
 #include "Sensors/analog_sensors.h"
 #include "Sensors/accelerometer.h"
+#include "App/pid.h"
 
 /* USER CODE END Includes */
 
@@ -331,11 +332,11 @@ void taskInit_PID_Rot_Position(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(1); // delay 55 ms at the beginning of loop, read delay from macro defined in pid.h
-    // here copy feedback position from REG_INPUT_ROT_POSITION to pid struct PV
-    // here copy target position from REG_HOLDING_ROT_TARGET_POSITION to pid struct SP
-    // here call pidUpdate() function
-    // here copy from pid struct CV to speed pid struct CV
+    osDelay(PID_POSITION_SAMPLING_TIME_MS);
+    PID_position_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_POSITION)] / 10.0f; // Convert from base 10 to degrees
+    PID_position_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)] / 10.0f; // Convert from base 10 to degrees
+    PID_Update(&PID_position_rot);
+    PID_speed_rot.values.setpoint = PID_position_rot.values.actuator_val;
   }
   /* USER CODE END taskInit_PID_Rot_Position */
 }
@@ -353,11 +354,11 @@ void taskInit_PID_Elev_Position(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(1); // delay 55 ms at the beginning of loop, read delay from macro defined in pid.h
-    // here copy feedback position from REG_INPUT_ELEV_POSITION to pid struct PV
-    // here copy target position from REG_HOLDING_ELEV_TARGET_POSITION to pid struct SP
-    // here call pidUpdate() function
-    // here copy from pid struct CV to speed pid struct CV
+    osDelay(PID_POSITION_SAMPLING_TIME_MS);
+    PID_position_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_POSITION)] / 10.0f; // Convert from base 10 to degrees
+    PID_position_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)] / 10.0f; // Convert from base 10 to degrees
+    PID_Update(&PID_position_elev);
+    PID_speed_elev.values.setpoint = PID_position_elev.values.actuator_val;
   }
   /* USER CODE END taskInit_PID_Elev_Position */
 }
@@ -456,15 +457,21 @@ void taskInit_shootingTimeLimit(void *argument)
 void taskInit_PID_Rot_Speed(void *argument)
 {
   /* USER CODE BEGIN taskInit_PID_Rot_Speed */
+
   /* Infinite loop */
   for (;;)
   {
-    osDelay(1); // delay 25 ms at the beginning of loop, read delay from macro defined in pid.h
+    osDelay(PID_SPEED_SAMPLING_TIME_MS);
     // here copy feedback position from REG_INPUT_ROT_SPEED to pid struct PV
-    // IF PID MODE IS SPEED ONLY, here copy target speed from REG_HOLDING_ROT_TARGET_SPEED to pid struct SP
-    // ELSE sp is set in another task, so do nothing :)
-    // here call pidUpdate() function
-    // here I will copy data from pid struct CV to correct medium (pwm or uart)
+    {
+      osDelay(PID_SPEED_SAMPLING_TIME_MS);
+      PID_speed_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_SPEED)] / 10.0f;
+      if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
+      {
+        PID_speed_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)] / 10.0f; // Convert from base 10 to degrees/sec
+      }
+      PID_Update(&PID_speed_rot);
+    }
   }
   /* USER CODE END taskInit_PID_Rot_Speed */
 }
@@ -482,12 +489,13 @@ void taskInit_PID_Elev_Speed(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(1); // delay 25 ms at the beginning of loop, read delay from macro defined in pid.h
-    // here copy feedback position from REG_INPUT_ELEV_SPEED to pid struct PV
-    // IF PID MODE IS SPEED ONLY, here copy target speed from REG_HOLDING_ELEV_TARGET_SPEED to pid struct SP
-    // ELSE sp is set in another task, so do nothing :)
-    // here call pidUpdate() function
-    // here I will copy data from pid struct CV to correct medium (pwm or uart)
+    osDelay(PID_SPEED_SAMPLING_TIME_MS);
+    PID_speed_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_SPEED)] / 10.0f;
+    if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
+    {
+      PID_speed_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)] / 10.0f; // Convert from base 10 to degrees/sec
+    }
+    PID_Update(&PID_speed_elev);
   }
   /* USER CODE END taskInit_PID_Elev_Speed */
 }

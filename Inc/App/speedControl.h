@@ -4,7 +4,7 @@
 #include "main.h"
 #include "tim.h"
 #include "usart.h"
-#include "App/pid_output.h"
+#include "App/pid.h"
 #include "ModbusRegisters/reg_holding.h"
 
 extern bool elevLimitMinReached;
