@@ -6,8 +6,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "main.h"
+
 #define PID_SPEED_SAMPLING_TIME_MS    25   //!< PID speed update period in ms
-#define PID_POSITION_SAMPLING_TIME_MS 10   //!< PID position update period in ms
+#define PID_POSITION_SAMPLING_TIME_MS 55   //!< PID position update period in ms
 
 typedef struct
 {

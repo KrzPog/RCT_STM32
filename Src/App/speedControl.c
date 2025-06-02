@@ -42,18 +42,18 @@ int16_t getRotSpeedCV(void)
 {
     uint16_t pidDisabled = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROG_CONFIG_BIT_PID_EN;
     if (pidDisabled)
-        return regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
+        return (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
     else
-        return 0; //!< @todo add PID read here
+        return (int16_t)PID_speed_rot.values.control_val;
 }
 
 int16_t getElevSpeedCV(void)
 {
     uint16_t pidDisabled = regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_EN;
     if (pidDisabled)
-        return regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
+        return (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
     else
-        return 0; //!< @todo add PID read here
+        return (int16_t)PID_speed_elev.values.control_val;
 }
 
 void sendRotSpeedCV(void)
