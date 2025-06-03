@@ -6,50 +6,54 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#define PID_SPEED_SAMPLING_TIME_MS    25   //!< PID speed update period in ms
-#define PID_POSITION_SAMPLING_TIME_MS 55   //!< PID position update period in ms
 
+#define PID_SPEED_SAMPLING_TIME_MS    25   // 25ms 
+#define PID_POSITION_SAMPLING_TIME_MS 55   // 55ms 
+
+// PID controller gains 
 typedef struct
 {
-    float Kp;  //!< Proportional gain
-    float Ki;  //!< Integral gain
-    float Kd;  //!< Derivative gain
+    float Kp;  // Proportional gain 
+    float Ki;  // Integral gain 
+    float Kd;  // Derivative gain 
 } PID_Parameters;
 
+// The main values that flow through the PID controller
 typedef struct
 {
-    float setpoint;     //!< Desired value (reference)
-    float current_val;  //!< Current process value (feedback)
-    float control_val;  //!< PID output (control signal)
+    float setpoint;     // target value
+    float current_val;  // measured feedback
+    float control_val;  // output signal
 } PID_Values;
 
+// Complete PID controller structure
 typedef struct
 {
-    PID_Parameters parameters; //!< PID gains
-    PID_Values values;         //!< PID values
+    PID_Parameters parameters; // Kp, Ki, Kd
+    PID_Values values;         // Input and output values
     
-    uint32_t prevTime;         //!< Last update time (ms) - for reference only
-    uint16_t sampling_time_ms; //!< Sampling time in milliseconds
+    uint32_t prevTime;         
+    uint16_t sampling_time_ms; // sampling time in milliseconds
     
-    // Internal PID variables
-    float integral;            //!< Integral sum
-    float prev_error;          //!< Previous error for derivative calculation
-    bool first_run;           //!< Flag to indicate first execution
+    // Internal calculation variables 
+    float integral;            // Running sum of all past errors
+    float prev_error;          // Previous error value 
+    bool first_run;           
     
-    // Output limits
-    float output_min;         //!< Minimum output limit
-    float output_max;         //!< Maximum output limit
-    bool limits_enabled;      //!< Enable/disable output limitings
+    // Safety limits
+    float output_min;         
+    float output_max;        
+    bool limits_enabled;      
     
 } PID;
 
-// External PID controller instances
-extern PID PID_speed_elev;
-extern PID PID_position_elev;
-extern PID PID_speed_rot;
-extern PID PID_position_rot;
+// Pre-made PID controllers for common use cases
+extern PID PID_speed_elev;    
+extern PID PID_position_elev; 
+extern PID PID_speed_rot;     
+extern PID PID_position_rot;  
 
-// Function prototypes
+// Functions 
 void PID_Init(PID *pPID, float kp, float ki, float kd, uint16_t sampling_time_ms);
 void PID_SetLimits(PID *pPID, float min, float max);
 void PID_Reset(PID *pPID);
