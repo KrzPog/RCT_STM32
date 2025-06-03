@@ -330,6 +330,21 @@ void taskInit_checkIfTimeout(void *argument)
 void taskInit_PID_Rot_Position(void *argument)
 {
   /* USER CODE BEGIN taskInit_PID_Rot_Position */
+  static bool initialized = false;
+  if (!initialized)
+  {
+    PID_Init(&PID_position_rot,
+             0.1f,   // Kp
+             0.001f, // Ki
+             0.1f,   // Kd
+             PID_POSITION_SAMPLING_TIME_MS);
+    USR_Printf_USBD_CDC("PID INITIALIZED IN TASK\r\n");
+    initialized = true;
+  }
+
+  regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)] = 0;
+  PID_SetLimits(&PID_position_rot, -10000, 10000);
+  PID_Reset(&PID_position_rot);
   /* Infinite loop */
   for (;;)
   {
@@ -338,10 +353,10 @@ void taskInit_PID_Rot_Position(void *argument)
     else
     {
       osDelay(PID_POSITION_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_position_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_POSITION)] / 10.0f;          // Convert from base 10 to degrees
-      PID_position_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)] / 10.0f; // Convert from base 10 to degrees
+      PID_position_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_POSITION)];
+      PID_position_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)];
       PID_Update(&PID_position_rot);
-      PID_speed_rot.values.setpoint = PID_position_rot.values.actuator_val;
+      PID_speed_rot.values.setpoint = PID_position_rot.values.control_val;
     }
   }
   /* USER CODE END taskInit_PID_Rot_Position */
@@ -365,10 +380,10 @@ void taskInit_PID_Elev_Position(void *argument)
     else
     {
       osDelay(PID_POSITION_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_position_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_POSITION)] / 10.0f;          // Convert from base 10 to degrees
-      PID_position_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)] / 10.0f; // Convert from base 10 to degrees
+      PID_position_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_POSITION)];
+      PID_position_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)];
       PID_Update(&PID_position_elev);
-      PID_speed_elev.values.setpoint = PID_position_elev.values.actuator_val;
+      PID_speed_elev.values.setpoint = PID_position_elev.values.control_val;
     }
   }
   /* USER CODE END taskInit_PID_Elev_Position */
@@ -392,7 +407,12 @@ void taskInit_debugUSBPrint(void *argument)
     // osDelay(5 / portTICK_RATE_MS);
     // USR_Printf_USBD_CDC("\tAccel [X:%6d Y:%6d Z:%6d], Gyro [X:%6d Y:%6d Z:%6d]", (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_X)], (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_X)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_Y)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_Z)]);
     // osDelay(5 / portTICK_RATE_MS);
-    USR_Printf_USBD_CDC("\tBattery_V:%5d, Trigg_I:%5d, Reload_I:%5d, Lamp_I:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_LAMP_CURRENT)]);
+    // USR_Printf_USBD_CDC("\tBattery_V:%5d, Trigg_I:%5d, Reload_I:%5d, Lamp_I:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_LAMP_CURRENT)]);
+    // osDelay(90 / portTICK_RATE_MS);
+    USR_Printf_USBD_CDC("PID_ROT: SP:%d CV:%d OUT:%d\r\n",
+                        (int)PID_position_rot.values.setpoint,
+                        (int)PID_position_rot.values.current_val,
+                        (int)PID_position_rot.values.control_val);
     osDelay(90 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
@@ -474,10 +494,10 @@ void taskInit_PID_Rot_Speed(void *argument)
   {
     {
       osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_speed_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_SPEED)] / 10.0f;
+      PID_speed_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_SPEED)];
       if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
       {
-        PID_speed_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)] / 10.0f; // Convert from base 10 to degrees/sec
+        PID_speed_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
       }
       PID_Update(&PID_speed_rot);
       sendRotSpeedCV();
@@ -500,10 +520,10 @@ void taskInit_PID_Elev_Speed(void *argument)
   for (;;)
   {
     osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-    PID_speed_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_SPEED)] / 10.0f;
+    PID_speed_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_SPEED)];
     if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
     {
-      PID_speed_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)] / 10.0f; // Convert from base 10 to degrees/sec
+      PID_speed_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
     }
     PID_Update(&PID_speed_elev);
     sendElevSpeedCV();

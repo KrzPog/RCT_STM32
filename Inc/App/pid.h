@@ -1,12 +1,10 @@
 #ifndef _PID_H
 #define _PID_H
 
-#include <stdbool.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
-
-#include "main.h"
 
 #define PID_SPEED_SAMPLING_TIME_MS    25   //!< PID speed update period in ms
 #define PID_POSITION_SAMPLING_TIME_MS 55   //!< PID position update period in ms
@@ -23,7 +21,6 @@ typedef struct
     float setpoint;     //!< Desired value (reference)
     float current_val;  //!< Current process value (feedback)
     float control_val;  //!< PID output (control signal)
-    float actuator_val; //!< Value to be sent to actuator (accessible from outside)
 } PID_Values;
 
 typedef struct
@@ -42,7 +39,7 @@ typedef struct
     // Output limits
     float output_min;         //!< Minimum output limit
     float output_max;         //!< Maximum output limit
-    bool limits_enabled;      //!< Enable/disable output limiting
+    bool limits_enabled;      //!< Enable/disable output limitings
     
 } PID;
 
@@ -59,6 +56,5 @@ void PID_Reset(PID *pPID);
 bool PID_Update(PID *pPID);
 void PID_SetParameters(PID *pPID, float kp, float ki, float kd);
 void PID_SetSetpoint(PID *pPID, float setpoint);
-void PID_SetActuatorValue(PID *pPID, float actuator_val);
 
 #endif

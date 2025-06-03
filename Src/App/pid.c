@@ -28,7 +28,6 @@ void PID_Init(PID *pPID, float kp, float ki, float kd, uint16_t sampling_time_ms
     pPID->values.setpoint = 0.0f;
     pPID->values.current_val = 0.0f;
     pPID->values.control_val = 0.0f;
-    pPID->values.actuator_val = 0.0f;
     
     // Initialize internal variables
     pPID->integral = 0.0f;
@@ -72,7 +71,6 @@ void PID_Reset(PID *pPID)
     pPID->prev_error = 0.0f;
     pPID->first_run = true;
     pPID->values.control_val = 0.0f;
-    pPID->values.actuator_val = 0.0f;
 }
 
 /**
@@ -140,7 +138,6 @@ bool PID_Update(PID *pPID)
     
     // Store results
     pPID->values.control_val = output;
-    pPID->values.actuator_val = output; // Copy to actuator value for external access
     pPID->prev_error = error;
     pPID->prevTime = currentTime;
     
@@ -175,17 +172,4 @@ void PID_SetSetpoint(PID *pPID, float setpoint)
         return;
     
     pPID->values.setpoint = setpoint;
-}
-
-/**
- * @brief Set actuator value manually (if needed)
- * @param pPID Pointer to PID structure
- * @param actuator_val Value to be sent to actuator
- */
-void PID_SetActuatorValue(PID *pPID, float actuator_val)
-{
-    if (pPID == NULL)
-        return;
-    
-    pPID->values.actuator_val = actuator_val;
 }
