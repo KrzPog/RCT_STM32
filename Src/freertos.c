@@ -344,7 +344,8 @@ void taskInit_PID_Rot_Position(void *argument)
 
   regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)] = 0;
   PID_SetLimits(&PID_position_rot, -10000, 10000);
-  PID_SetSpeedLimits(&PID_position_rot, 1000, 1000);
+  // PID_SetSpeedLimits(&PID_position_rot, 1000, 1000);
+  PID_position_rot.speed_limits_enabled = false;
   PID_Reset(&PID_position_rot);
   /* Infinite loop */
   for (;;)
@@ -354,8 +355,8 @@ void taskInit_PID_Rot_Position(void *argument)
     else
     {
       osDelay(PID_POSITION_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_position_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_POSITION)];
-      PID_position_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)];
+      PID_position_rot.values.current_val = regInput[regInpIx(REG_INPUT_ROT_POSITION)];
+      PID_position_rot.values.setpoint = regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)];
       PID_Update(&PID_position_rot);
       PID_speed_rot.values.setpoint = PID_position_rot.values.control_val;
     }

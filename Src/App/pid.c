@@ -135,10 +135,10 @@ bool PID_Update(PID *pPID)
     float dt = (float)pPID->sampling_time_ms / 1000.0f;
     int16_t error = pPID->values.setpoint - pPID->values.current_val;
     
-    // Proportional - używamy int32_t dla większej precyzji podczas obliczeń
+    // Proportional
     int32_t proportional = (int32_t)(pPID->parameters.Kp * error);
     
-    // Integral - akumulujemy z większą precyzją
+    // Integral
     pPID->integral_scaled += (int32_t)(error * dt * PID_SCALE_FACTOR);
     int32_t integral = (int32_t)(pPID->parameters.Ki * pPID->integral_scaled / PID_SCALE_FACTOR);
     
@@ -146,19 +146,17 @@ bool PID_Update(PID *pPID)
     int32_t derivative = 0;
     if (!pPID->first_run)
     {
-        // Calculate rate of change of error
         derivative = (int32_t)(pPID->parameters.Kd * (error - pPID->prev_error) / dt);
     }
     else
     {
-        // Skip derivative calculation on first run
         pPID->first_run = false;
     }
     
-    // Combine all three terms to get the final output
+    // Combine all three terms
     int32_t output_32 = proportional + integral + derivative;
     
-    // Clamp to int16_t range before applying user limits
+    // Clamp to int16_t range
     if (output_32 > INT16_MAX)
         output_32 = INT16_MAX;
     else if (output_32 < INT16_MIN)
@@ -166,13 +164,28 @@ bool PID_Update(PID *pPID)
     
     int16_t output = (int16_t)output_32;
     
-    // Apply safety limits
+    // NAJPIERW zastosuj speed limits (jeśli włączone)
+    if (pPID->speed_limits_enabled && !pPID->first_run)
+    {
+        int16_t output_change = output - pPID->prev_output;
+        
+        if (output_change > pPID->max_speed_up)
+        {
+            output = pPID->prev_output + pPID->max_speed_up;
+        }
+        else if (output_change < -(int16_t)pPID->max_speed_down)
+        {
+            output = pPID->prev_output - pPID->max_speed_down;
+        }
+    }
+    
+    // POTEM zastosuj output limits i anti-windup
     if (pPID->limits_enabled)
     {
         if (output > pPID->output_max)
         {
             output = pPID->output_max;
-            // Anti-windup - ograniczamy integral żeby nie rósł w nieskończoność
+            // Anti-windup
             if (pPID->parameters.Ki != 0.0f)
             {
                 int32_t max_integral = (int32_t)((output - proportional - derivative) / pPID->parameters.Ki * PID_SCALE_FACTOR);
@@ -193,25 +206,10 @@ bool PID_Update(PID *pPID)
         }
     }
     
-    // Apply speed limits (rate limiting)
-    if (pPID->speed_limits_enabled && !pPID->first_run)
-    {
-        int16_t output_change = output - pPID->prev_output;
-        
-        if (output_change > pPID->max_speed_up)
-        {
-            output = pPID->prev_output + pPID->max_speed_up;
-        }
-        else if (output_change < -(int16_t)pPID->max_speed_down)
-        {
-            output = pPID->prev_output - pPID->max_speed_down;
-        }
-    }
-    
     // Save the results
     pPID->values.control_val = output;
     pPID->prev_error = error;
-    pPID->prev_output = output;  // Save current output for next speed limit check
+    pPID->prev_output = output;
     pPID->prevTime = currentTime;
     
     return true;
