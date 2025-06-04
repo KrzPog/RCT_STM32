@@ -29,21 +29,27 @@ void PID_Init(PID *pPID, float kp, float ki, float kd, uint16_t sampling_time_ms
     pPID->parameters.Kd = kd;
     
     // Start with everything at zero
-    pPID->values.setpoint = 0.0f;
-    pPID->values.current_val = 0.0f;
-    pPID->values.control_val = 0.0f;
+    pPID->values.setpoint = 0;
+    pPID->values.current_val = 0;
+    pPID->values.control_val = 0;
     
     // Clear out the internal calculation variables
-    pPID->integral = 0.0f;
-    pPID->prev_error = 0.0f;
+    pPID->integral_scaled = 0;
+    pPID->prev_error = 0;
     pPID->first_run = true;
     pPID->prevTime = HAL_GetTick();
     pPID->sampling_time_ms = sampling_time_ms;
     
     // Start with output limits disabled
-    pPID->output_min = 0.0f;
-    pPID->output_max = 0.0f;
+    pPID->output_min = 0;
+    pPID->output_max = 0;
     pPID->limits_enabled = false;
+    
+    // Start with speed limits disabled
+    pPID->max_speed_up = 0;
+    pPID->max_speed_down = 0;
+    pPID->speed_limits_enabled = false;
+    pPID->prev_output = 0;
 }
 
 /**
@@ -56,7 +62,7 @@ void PID_Init(PID *pPID, float kp, float ki, float kd, uint16_t sampling_time_ms
  * @param min   Smallest value the controller can output
  * @param max   Largest value the controller can output
  */
-void PID_SetLimits(PID *pPID, float min, float max)
+void PID_SetLimits(PID *pPID, int16_t min, int16_t max)
 {
     if (pPID == NULL)
         return;
@@ -64,6 +70,26 @@ void PID_SetLimits(PID *pPID, float min, float max)
     pPID->output_min = min;
     pPID->output_max = max;
     pPID->limits_enabled = true;
+}
+
+/**
+ * Sets up speed limits to control how fast the output can change
+ * 
+ * This prevents sudden jumps in output that could cause system instability
+ * or mechanical stress. Limits are applied per update cycle.
+ * 
+ * @param pPID           Which PID controller to limit
+ * @param max_speed_up   Maximum increase in output per update cycle
+ * @param max_speed_down Maximum decrease in output per update cycle (positive value)
+ */
+void PID_SetSpeedLimits(PID *pPID, int16_t max_speed_up, int16_t max_speed_down)
+{
+    if (pPID == NULL)
+        return;
+    
+    pPID->max_speed_up = max_speed_up;
+    pPID->max_speed_down = max_speed_down;
+    pPID->speed_limits_enabled = true;
 }
 
 /**
@@ -81,10 +107,11 @@ void PID_Reset(PID *pPID)
         return;
     
     // Clear the memory but keep the tuning parameters
-    pPID->integral = 0.0f;
-    pPID->prev_error = 0.0f;
+    pPID->integral_scaled = 0;
+    pPID->prev_error = 0;
     pPID->first_run = true;
-    pPID->values.control_val = 0.0f;
+    pPID->values.control_val = 0;
+    pPID->prev_output = 0;
 }
 
 /**
@@ -106,21 +133,21 @@ bool PID_Update(PID *pPID)
     
     // Use the configured sampling time for consistent calculations
     float dt = (float)pPID->sampling_time_ms / 1000.0f;
-    float error = pPID->values.setpoint - pPID->values.current_val;
+    int16_t error = pPID->values.setpoint - pPID->values.current_val;
     
-    // Proportional
-    float proportional = pPID->parameters.Kp * error;
+    // Proportional - używamy int32_t dla większej precyzji podczas obliczeń
+    int32_t proportional = (int32_t)(pPID->parameters.Kp * error);
     
-    // Integral
-    pPID->integral += error * dt;
-    float integral = pPID->parameters.Ki * pPID->integral;
+    // Integral - akumulujemy z większą precyzją
+    pPID->integral_scaled += (int32_t)(error * dt * PID_SCALE_FACTOR);
+    int32_t integral = (int32_t)(pPID->parameters.Ki * pPID->integral_scaled / PID_SCALE_FACTOR);
     
     // Derivative
-    float derivative = 0.0f;
+    int32_t derivative = 0;
     if (!pPID->first_run)
     {
         // Calculate rate of change of error
-        derivative = pPID->parameters.Kd * (error - pPID->prev_error) / dt;
+        derivative = (int32_t)(pPID->parameters.Kd * (error - pPID->prev_error) / dt);
     }
     else
     {
@@ -129,7 +156,15 @@ bool PID_Update(PID *pPID)
     }
     
     // Combine all three terms to get the final output
-    float output = proportional + integral + derivative;
+    int32_t output_32 = proportional + integral + derivative;
+    
+    // Clamp to int16_t range before applying user limits
+    if (output_32 > INT16_MAX)
+        output_32 = INT16_MAX;
+    else if (output_32 < INT16_MIN)
+        output_32 = INT16_MIN;
+    
+    int16_t output = (int16_t)output_32;
     
     // Apply safety limits
     if (pPID->limits_enabled)
@@ -137,10 +172,12 @@ bool PID_Update(PID *pPID)
         if (output > pPID->output_max)
         {
             output = pPID->output_max;
-            // Anti-windup
+            // Anti-windup - ograniczamy integral żeby nie rósł w nieskończoność
             if (pPID->parameters.Ki != 0.0f)
             {
-                pPID->integral = (output - proportional - derivative) / pPID->parameters.Ki;
+                int32_t max_integral = (int32_t)((output - proportional - derivative) / pPID->parameters.Ki * PID_SCALE_FACTOR);
+                if (pPID->integral_scaled > max_integral)
+                    pPID->integral_scaled = max_integral;
             }
         }
         else if (output < pPID->output_min)
@@ -149,14 +186,32 @@ bool PID_Update(PID *pPID)
             // Anti-windup
             if (pPID->parameters.Ki != 0.0f)
             {
-                pPID->integral = (output - proportional - derivative) / pPID->parameters.Ki;
+                int32_t min_integral = (int32_t)((output - proportional - derivative) / pPID->parameters.Ki * PID_SCALE_FACTOR);
+                if (pPID->integral_scaled < min_integral)
+                    pPID->integral_scaled = min_integral;
             }
+        }
+    }
+    
+    // Apply speed limits (rate limiting)
+    if (pPID->speed_limits_enabled && !pPID->first_run)
+    {
+        int16_t output_change = output - pPID->prev_output;
+        
+        if (output_change > pPID->max_speed_up)
+        {
+            output = pPID->prev_output + pPID->max_speed_up;
+        }
+        else if (output_change < -(int16_t)pPID->max_speed_down)
+        {
+            output = pPID->prev_output - pPID->max_speed_down;
         }
     }
     
     // Save the results
     pPID->values.control_val = output;
     pPID->prev_error = error;
+    pPID->prev_output = output;  // Save current output for next speed limit check
     pPID->prevTime = currentTime;
     
     return true;
@@ -192,7 +247,7 @@ void PID_SetParameters(PID *pPID, float kp, float ki, float kd)
  * @param pPID      Which PID controller to command
  * @param setpoint  The target value you want to reach
  */
-void PID_SetSetpoint(PID *pPID, float setpoint)
+void PID_SetSetpoint(PID *pPID, int16_t setpoint)
 {
     if (pPID == NULL)
         return;

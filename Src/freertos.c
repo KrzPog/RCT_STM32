@@ -344,6 +344,7 @@ void taskInit_PID_Rot_Position(void *argument)
 
   regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)] = 0;
   PID_SetLimits(&PID_position_rot, -10000, 10000);
+  PID_SetSpeedLimits(&PID_position_rot, 1000, 1000);
   PID_Reset(&PID_position_rot);
   /* Infinite loop */
   for (;;)
@@ -410,9 +411,9 @@ void taskInit_debugUSBPrint(void *argument)
     // USR_Printf_USBD_CDC("\tBattery_V:%5d, Trigg_I:%5d, Reload_I:%5d, Lamp_I:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_LAMP_CURRENT)]);
     // osDelay(90 / portTICK_RATE_MS);
     USR_Printf_USBD_CDC("PID_ROT: SP:%d CV:%d OUT:%d\r\n",
-                        (int)PID_position_rot.values.setpoint,
-                        (int)PID_position_rot.values.current_val,
-                        (int)PID_position_rot.values.control_val);
+                        PID_position_rot.values.setpoint,
+                        PID_position_rot.values.current_val,
+                        PID_position_rot.values.control_val);
     osDelay(90 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
