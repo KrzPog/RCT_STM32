@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "main.h"
+
 #define PID_SPEED_SAMPLING_TIME_MS    25   // 25ms 
 #define PID_POSITION_SAMPLING_TIME_MS 55   // 55ms 
 

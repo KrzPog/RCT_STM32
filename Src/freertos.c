@@ -355,8 +355,8 @@ void taskInit_PID_Rot_Position(void *argument)
     else
     {
       osDelay(PID_POSITION_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_position_rot.values.current_val = regInput[regInpIx(REG_INPUT_ROT_POSITION)];
-      PID_position_rot.values.setpoint = regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)];
+      PID_position_rot.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)];
+      PID_position_rot.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)];
       PID_Update(&PID_position_rot);
       PID_speed_rot.values.setpoint = PID_position_rot.values.control_val;
     }
@@ -382,8 +382,8 @@ void taskInit_PID_Elev_Position(void *argument)
     else
     {
       osDelay(PID_POSITION_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_position_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_POSITION)];
-      PID_position_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)];
+      PID_position_elev.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)];
+      PID_position_elev.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)];
       PID_Update(&PID_position_elev);
       PID_speed_elev.values.setpoint = PID_position_elev.values.control_val;
     }
@@ -496,10 +496,10 @@ void taskInit_PID_Rot_Speed(void *argument)
   {
     {
       osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_speed_rot.values.current_val = (float)regInput[regInpIx(REG_INPUT_ROT_SPEED)];
+      PID_speed_rot.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)];
       if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
       {
-        PID_speed_rot.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
+        PID_speed_rot.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
       }
       PID_Update(&PID_speed_rot);
       sendRotSpeedCV();
@@ -522,10 +522,10 @@ void taskInit_PID_Elev_Speed(void *argument)
   for (;;)
   {
     osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-    PID_speed_elev.values.current_val = (float)regInput[regInpIx(REG_INPUT_ELEV_SPEED)];
+    PID_speed_elev.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)];
     if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
     {
-      PID_speed_elev.values.setpoint = (float)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
+      PID_speed_elev.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
     }
     PID_Update(&PID_speed_elev);
     sendElevSpeedCV();
