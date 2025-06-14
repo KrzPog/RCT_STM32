@@ -25,6 +25,9 @@
         "coroutine": "c",
         "stdbool.h": "c",
         "main.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "speedcontrol.h": "c",
+        "pid.h": "c",
+        "usbd_cdc.h": "c"
     }
 }

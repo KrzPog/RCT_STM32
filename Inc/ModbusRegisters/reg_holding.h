@@ -2,7 +2,7 @@
 #define _REG_HOLDING_H
 
 #define REG_HOLDING_START 0x4000
-#define REG_HOLDING_COUNT 1
+#define REG_HOLDING_COUNT 5
 
 #define REG_FLASH_START 0x5000
 #define REG_FLASH_COUNT 21
@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define REG_FLASH_ROT_CONFIG 0x5000
-#define REG_FLASH_ROG_CONFIG_BIT_PID_EN 0x0001      //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
+#define REG_FLASH_ROT_CONFIG_BIT_PID_EN 0x0001      //!< Bit 0: 1 - Open loop control, 0 - Closed loop control
 #define REG_FLASH_ROT_CONFIG_BIT_PID_TYPE 0x0002    //!< Bit 1: 1 - Position control, 0 - Speed control
 #define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL 0x000C //!< Bits 2-3: 11 - UART, 10 - PPM, 01 - PWM
 #define REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART 0x000C

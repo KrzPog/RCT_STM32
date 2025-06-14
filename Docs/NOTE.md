@@ -31,8 +31,8 @@ Modbus protocol used according to [Official Modbus Specification](https://www.mo
 
 | Address   | Register Name                      | Value    | Type    | Description         |
 |-----------|------------------------------------|----------|---------|---------------------|
-| `0x5000`  | **REG_FLASH_ROT_CONFIG**           | `0x0006` | uint16  |                     |
-| `0x5002`  | **REG_FLASH_ELEV_CONFIG**          | `0x0006` | uint16  |                     |
+| `0x5000`  | **REG_FLASH_ROT_CONFIG**           | `0x000D` | uint16  |                     |
+| `0x5002`  | **REG_FLASH_ELEV_CONFIG**          | `0x0005` | uint16  |                     |
 | `0x5004`  | **REG_FLASH_ROT_POSITION_MIN**     | `-3600`  | int16   | degree × 10         |
 | `0x5006`  | **REG_FLASH_ROT_POSITION_MAX**     | `3600`   | int16   | degree × 10         |
 | `0x5008`  | **REG_FLASH_ELEV_POSITION_MIN**    | `-50`    | int16   | degree × 10         |
@@ -41,17 +41,17 @@ Modbus protocol used according to [Official Modbus Specification](https://www.mo
 | `0x500E`  | **REG_FLASH_ROT_SPEED_MAX**        | `600`    | uint16  | degree × 10 / s     |
 | `0x5010`  | **REG_FLASH_ELEV_SPEED_MIN**       | `10`     | uint16  | degree × 10 / s     |
 | `0x5012`  | **REG_FLASH_ELEV_SPEED_MAX**       | `600`    | uint16  | degree × 10 / s     |
-| `0x5014`  | **REG_FLASH_ROT_DUTY_PWM_MIN**     | `10`     | uint16  | percent × 10        |
-| `0x5016`  | **REG_FLASH_ROT_DUTY_PWM_MAX**     | `600`    | uint16  | percent × 10        |
-| `0x5018`  | **REG_FLASH_ELEV_DUTY_PWM_MIN**    | `10`     | uint16  | percent × 10        |
-| `0x501A`  | **REG_FLASH_ELEV_DUTY_PWM_MAX**    | `600`    | uint16  | percent × 10        |
+| `0x5014`  | **REG_FLASH_ROT_DUTY_PWM_MIN**     | `16`     | uint16  | percent × 10        |
+| `0x5016`  | **REG_FLASH_ROT_DUTY_PWM_MAX**     | `1000`   | uint16  | percent × 10        |
+| `0x5018`  | **REG_FLASH_ELEV_DUTY_PWM_MIN**    | `16`     | uint16  | percent × 10        |
+| `0x501A`  | **REG_FLASH_ELEV_DUTY_PWM_MAX**    | `1000`   | uint16  | percent × 10        |
 | `0x501C`  | **REG_FLASH_ROT_UART_SPEED_MIN**   | `1`      | uint16  | rpm                 |
-| `0x501E`  | **REG_FLASH_ROT_UART_SPEED_MAX**   | `10`     | uint16  | rpm                 |
+| `0x501E`  | **REG_FLASH_ROT_UART_SPEED_MAX**   | `100`    | uint16  | rpm                 |
 | `0x5020`  | **REG_FLASH_ELEV_UART_SPEED_MIN**  | `1`      | uint16  | rpm                 |
-| `0x5022`  | **REG_FLASH_ELEV_UART_SPEED_MAX**  | `10`     | uint16  | rpm                 |
+| `0x5022`  | **REG_FLASH_ELEV_UART_SPEED_MAX**  | `100`    | uint16  | rpm                 |
 | `0x5024`  | **REG_FLASH_ROT_ENCODER_PPR**      | `20`     | uint16  | unit                |
 | `0x5026`  | **REG_FLASH_ELEV_ENCODER_PPR**     | `20`     | uint16  | unit                |
-| `0x5028`  | **REG_FLASH_SHOOTING_TIME_LIMIT**  | `100`    | uint16  | ms                  |
+| `0x5028`  | **REG_FLASH_SHOOTING_TIME_LIMIT**  | `500`    | uint16  | ms                  |
 
 ## Modbus frame to write them
 
@@ -78,7 +78,7 @@ Modbus protocol used according to [Official Modbus Specification](https://www.mo
 ### Write data
 
 > REQUEST:  
-> `01 10 5000 0015 2A 0006 0006 F220 0E10 FFCE 01F4 000A 0258 000A 0258 000A 0258 000A 0258 0001 000A 0001 000A 0014 0014 0064 15A2`
+> `01 10 5000 0015 2A 000D 0005 F220 0E10 FFCE 01F4 000A 0258 000A 0258 0010 03E8 0010 03E8 0001 0064 0001 0064 0014 0014 01F4 CD19`
 > 
 > RESPONSE:  
 > *Should start with `01 10 5000`*

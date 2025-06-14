@@ -4,11 +4,17 @@
 #include "main.h"
 #include "tim.h"
 #include "usart.h"
+#include "usbd_cdc_if.h"
 #include "App/pid.h"
 #include "ModbusRegisters/reg_holding.h"
 
+#define SPEED_UPDATE_PERIOD_MS 100
+
 extern bool elevLimitMinReached;
 extern bool elevLimitMaxReached;
+
+extern int16_t speedCV_rot;
+extern int16_t speedCV_elev;
 
 void initRotSpeedControl(void);
 void initElevSpeedControl(void);
@@ -16,7 +22,10 @@ void initElevSpeedControl(void);
 int16_t getRotSpeedCV(void);
 int16_t getElevSpeedCV(void);
 
-void sendRotSpeedCV(void);
-void sendElevSpeedCV(void);
+void setRotSpeedPWM(int16_t speedCV);
+void setElevSpeedPWM(int16_t speedCV);
+
+void setRotSpeedUART(int16_t speedCV);
+void setElevSpeedUART(int16_t speedCV);
 
 #endif
