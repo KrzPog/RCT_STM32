@@ -71,5 +71,6 @@ void PID_Reset(PID *pPID);
 bool PID_Update(PID *pPID);
 void PID_SetParameters(PID *pPID, float kp, float ki, float kd);
 void PID_SetSetpoint(PID *pPID, int16_t setpoint);
+static int16_t normalize_angle_error(int16_t error);
 
 #endif

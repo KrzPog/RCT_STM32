@@ -133,7 +133,10 @@ bool PID_Update(PID *pPID)
     
     // Use the configured sampling time for consistent calculations
     float dt = (float)pPID->sampling_time_ms / 1000.0f;
-    int16_t error = pPID->values.setpoint - pPID->values.current_val;
+    
+    // POPRAWKA: Normalizacja błędu dla enkodera
+    int16_t raw_error = pPID->values.setpoint - pPID->values.current_val;
+    int16_t error = normalize_angle_error(raw_error);
     
     // Proportional
     int32_t proportional = (int32_t)(pPID->parameters.Kp * error);
@@ -142,11 +145,12 @@ bool PID_Update(PID *pPID)
     pPID->integral_scaled += (int32_t)(error * dt * PID_SCALE_FACTOR);
     int32_t integral = (int32_t)(pPID->parameters.Ki * pPID->integral_scaled / PID_SCALE_FACTOR);
     
-    // Derivative
+    // Derivative - POPRAWKA: normalizacja różnicy błędów
     int32_t derivative = 0;
     if (!pPID->first_run)
     {
-        derivative = (int32_t)(pPID->parameters.Kd * (error - pPID->prev_error) / dt);
+        int16_t error_diff = normalize_angle_error(error - pPID->prev_error);
+        derivative = (int32_t)(pPID->parameters.Kd * error_diff / dt);
     }
     else
     {
@@ -206,13 +210,31 @@ bool PID_Update(PID *pPID)
         }
     }
     
-    // Save the results
+    // Save the results - POPRAWKA: zapisz znormalizowany błąd
     pPID->values.control_val = output;
-    pPID->prev_error = error;
+    pPID->prev_error = error;  // Zapisz znormalizowany błąd
     pPID->prev_output = output;
     pPID->prevTime = currentTime;
     
     return true;
+}
+
+/**
+ * Normalizuje błąd kąta dla enkodera 0-360°
+ * Zapewnia, że błąd jest zawsze w zakresie -180° do +180°
+ * 
+ * @param error  Surowy błąd (setpoint - current)
+ * @return       Znormalizowany błąd (-180° do +180°)
+ */
+static int16_t normalize_angle_error(int16_t error)
+{
+    // Dla enkodera 0-360°: normalizujemy do ±180°
+    while (error > 180)
+        error -= 360;
+    while (error < -180)
+        error += 360;
+    
+    return error;
 }
 
 /**
