@@ -64,63 +64,63 @@ osThreadId_t task_encodersUpdateHandle;
 const osThreadAttr_t task_encodersUpdate_attributes = {
     .name = "task_encodersUpdate",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityHigh3,
 };
 /* Definitions for task_stateLEDUpdate */
 osThreadId_t task_stateLEDUpdateHandle;
 const osThreadAttr_t task_stateLEDUpdate_attributes = {
     .name = "task_stateLEDUpdate",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
+    .priority = (osPriority_t)osPriorityLow7,
 };
 /* Definitions for task_pollModbus */
 osThreadId_t task_pollModbusHandle;
 const osThreadAttr_t task_pollModbus_attributes = {
     .name = "task_pollModbus",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityBelowNormal,
+    .priority = (osPriority_t)osPriorityAboveNormal6,
 };
 /* Definitions for task_checkIfTimeout */
 osThreadId_t task_checkIfTimeoutHandle;
 const osThreadAttr_t task_checkIfTimeout_attributes = {
     .name = "task_checkIfTimeout",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+    .priority = (osPriority_t)osPriorityLow7,
 };
 /* Definitions for task_PID_Rot_Position */
 osThreadId_t task_PID_Rot_PositionHandle;
 const osThreadAttr_t task_PID_Rot_Position_attributes = {
     .name = "task_PID_Rot_Position",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityHigh6,
 };
 /* Definitions for task_PID_Elev_Position */
 osThreadId_t task_PID_Elev_PositionHandle;
 const osThreadAttr_t task_PID_Elev_Position_attributes = {
     .name = "task_PID_Elev_Position",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityHigh6,
 };
 /* Definitions for task_debugUSBPrint */
 osThreadId_t task_debugUSBPrintHandle;
 const osThreadAttr_t task_debugUSBPrint_attributes = {
     .name = "task_debugUSBPrint",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+    .priority = (osPriority_t)osPriorityBelowNormal7,
 };
 /* Definitions for task_checkAccelValues */
 osThreadId_t task_checkAccelValuesHandle;
 const osThreadAttr_t task_checkAccelValues_attributes = {
     .name = "task_checkAccelValues",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityNormal7,
 };
 /* Definitions for task_checkAnalogSensorsData */
 osThreadId_t task_checkAnalogSensorsDataHandle;
 const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
     .name = "task_checkAnalogSensorsData",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityAboveNormal7,
 };
 /* Definitions for task_shootingTimeLimit */
 osThreadId_t task_shootingTimeLimitHandle;
@@ -134,14 +134,28 @@ osThreadId_t task_PID_Rot_SpeedHandle;
 const osThreadAttr_t task_PID_Rot_Speed_attributes = {
     .name = "task_PID_Rot_Speed",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityHigh5,
 };
 /* Definitions for task_PID_Elev_Speed */
 osThreadId_t task_PID_Elev_SpeedHandle;
 const osThreadAttr_t task_PID_Elev_Speed_attributes = {
     .name = "task_PID_Elev_Speed",
     .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityAboveNormal,
+    .priority = (osPriority_t)osPriorityHigh5,
+};
+/* Definitions for task_send_Rot_Speed */
+osThreadId_t task_send_Rot_SpeedHandle;
+const osThreadAttr_t task_send_Rot_Speed_attributes = {
+    .name = "task_send_Rot_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh4,
+};
+/* Definitions for task_send_Elev_Speed */
+osThreadId_t task_send_Elev_SpeedHandle;
+const osThreadAttr_t task_send_Elev_Speed_attributes = {
+    .name = "task_send_Elev_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh4,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -161,6 +175,8 @@ void taskInit_checkAnalogSensorsData(void *argument);
 void taskInit_shootingTimeLimit(void *argument);
 void taskInit_PID_Rot_Speed(void *argument);
 void taskInit_PID_Elev_Speed(void *argument);
+void taskInit_send_Rot_Speed(void *argument);
+void taskInit_send_Elev_Speed(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -228,6 +244,12 @@ void MX_FREERTOS_Init(void)
 
   /* creation of task_PID_Elev_Speed */
   task_PID_Elev_SpeedHandle = osThreadNew(taskInit_PID_Elev_Speed, NULL, &task_PID_Elev_Speed_attributes);
+
+  /* creation of task_send_Rot_Speed */
+  task_send_Rot_SpeedHandle = osThreadNew(taskInit_send_Rot_Speed, NULL, &task_send_Rot_Speed_attributes);
+
+  /* creation of task_send_Elev_Speed */
+  task_send_Elev_SpeedHandle = osThreadNew(taskInit_send_Elev_Speed, NULL, &task_send_Elev_Speed_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -350,7 +372,9 @@ void taskInit_PID_Rot_Position(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
+    bool positionPIDEnabled = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_EN;
+    positionPIDEnabled &= regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE;
+    if (!positionPIDEnabled)
       vTaskSuspend(NULL);
     else
     {
@@ -377,7 +401,9 @@ void taskInit_PID_Elev_Position(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
+    bool positionPIDEnabled = regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_EN;
+    positionPIDEnabled &= regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE;
+    if (!positionPIDEnabled)
       vTaskSuspend(NULL);
     else
     {
@@ -411,10 +437,10 @@ void taskInit_debugUSBPrint(void *argument)
     // osDelay(5 / portTICK_RATE_MS);
     // USR_Printf_USBD_CDC("\tBattery_V:%5d, Trigg_I:%5d, Reload_I:%5d, Lamp_I:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_LAMP_CURRENT)]);
     // osDelay(90 / portTICK_RATE_MS);
-    USR_Printf_USBD_CDC("PID_ROT: SP:%d CV:%d OUT:%d\r\n",
-                        PID_position_rot.values.setpoint,
-                        PID_position_rot.values.current_val,
-                        PID_position_rot.values.control_val);
+    // USR_Printf_USBD_CDC(">SP:%d,PV:%d,CV:%d\r\n",
+    //                     PID_position_rot.values.setpoint,
+    //                     PID_position_rot.values.current_val,
+    //                     PID_position_rot.values.control_val);
     osDelay(90 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
@@ -434,8 +460,8 @@ void taskInit_checkAccelValues(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    accelerometerUpdate();
     osDelay(ACCELEROMETER_SAMPLING_TIME_MS / portTICK_RATE_MS);
+    accelerometerUpdate();
   }
   /* USER CODE END taskInit_checkAccelValues */
 }
@@ -453,8 +479,8 @@ void taskInit_checkAnalogSensorsData(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    analogSensorsUpdate();
     osDelay(ANALOG_SAMPLING_TIME_MS / portTICK_RATE_MS);
+    analogSensorsUpdate();
   }
   /* USER CODE END taskInit_checkAnalogSensorsData */
 }
@@ -495,14 +521,17 @@ void taskInit_PID_Rot_Speed(void *argument)
   for (;;)
   {
     {
-      osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-      PID_speed_rot.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)];
-      if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
+      bool speedPIDEnabled = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_EN;
+      if (!speedPIDEnabled)
+        vTaskSuspend(NULL);
+      else
       {
-        PID_speed_rot.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
+        osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
+        PID_speed_rot.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)];
+        if (!(regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_TYPE))
+          PID_speed_rot.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
+        PID_Update(&PID_speed_rot);
       }
-      PID_Update(&PID_speed_rot);
-      sendRotSpeedCV();
     }
   }
   /* USER CODE END taskInit_PID_Rot_Speed */
@@ -521,16 +550,93 @@ void taskInit_PID_Elev_Speed(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
-    PID_speed_elev.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)];
-    if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
+    bool speedPIDEnabled = regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_EN;
+    if (!speedPIDEnabled)
+      vTaskSuspend(NULL);
+    else
     {
-      PID_speed_elev.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
+      osDelay(PID_SPEED_SAMPLING_TIME_MS / portTICK_RATE_MS);
+      PID_speed_elev.values.current_val = (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)];
+      if (!(regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_TYPE))
+        PID_speed_elev.values.setpoint = (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
+      PID_Update(&PID_speed_elev);
     }
-    PID_Update(&PID_speed_elev);
-    sendElevSpeedCV();
   }
   /* USER CODE END taskInit_PID_Elev_Speed */
+}
+
+/* USER CODE BEGIN Header_taskInit_send_Rot_Speed */
+/**
+ * @brief Function implementing the task_send_Rot_Speed thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_send_Rot_Speed */
+void taskInit_send_Rot_Speed(void *argument)
+{
+  /* USER CODE BEGIN taskInit_send_Rot_Speed */
+  /* Infinite loop */
+  for (;;)
+  {
+    osDelay(SPEED_UPDATE_PERIOD_MS / portTICK_RATE_MS);
+    speedCV_rot = getRotSpeedCV();
+    switch (regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BITMASK_CONTROL)
+    {
+    case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART:
+      setRotSpeedUART(speedCV_rot);
+      break;
+
+    case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM:
+      setRotSpeedPWM(speedCV_rot);
+      break;
+
+    default:
+      break;
+    }
+
+    if ((speedCV_rot != 0) || (speedCV_elev != 0))
+      regInput[regInpIx(REG_INPUT_STATUS_WORD)] |= REG_INPUT_STATUS_WORD_BIT_IN_MOTION;
+    else
+      regInput[regInpIx(REG_INPUT_STATUS_WORD)] &= ~REG_INPUT_STATUS_WORD_BIT_IN_MOTION;
+  }
+  /* USER CODE END taskInit_send_Rot_Speed */
+}
+
+/* USER CODE BEGIN Header_taskInit_send_Elev_Speed */
+/**
+ * @brief Function implementing the task_send_Elev_Speed thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_taskInit_send_Elev_Speed */
+void taskInit_send_Elev_Speed(void *argument)
+{
+  /* USER CODE BEGIN taskInit_send_Elev_Speed */
+  /* Infinite loop */
+  for (;;)
+  {
+    osDelay(SPEED_UPDATE_PERIOD_MS / portTICK_RATE_MS);
+    speedCV_elev = getElevSpeedCV();
+    switch (regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL)
+    {
+    case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART:
+      setElevSpeedUART(speedCV_elev);
+      break;
+
+    case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM:
+      setElevSpeedPWM(speedCV_elev);
+      break;
+
+    default:
+      break;
+
+      if ((speedCV_rot != 0) || (speedCV_elev != 0))
+        regInput[regInpIx(REG_INPUT_STATUS_WORD)] |= REG_INPUT_STATUS_WORD_BIT_IN_MOTION;
+      else
+        regInput[regInpIx(REG_INPUT_STATUS_WORD)] &= ~REG_INPUT_STATUS_WORD_BIT_IN_MOTION;
+    }
+  }
+  /* USER CODE END taskInit_send_Elev_Speed */
 }
 
 /* Private application code --------------------------------------------------*/

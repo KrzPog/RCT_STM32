@@ -6,6 +6,9 @@ bool elevLimitMaxReached = false;
 uint16_t rotControlConfig = 0;
 uint16_t elevControlConfig = 0;
 
+int16_t speedCV_rot = 0;
+int16_t speedCV_elev = 0;
+
 void initRotSpeedControl(void)
 {
     rotControlConfig = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BITMASK_CONTROL;
@@ -16,7 +19,7 @@ void initRotSpeedControl(void)
         HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
         break;
     case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART:
-        HAL_UART_Init(&huart2);
+        // HAL_UART_Init(&huart2);
         break;
     }
 }
@@ -32,95 +35,110 @@ void initElevSpeedControl(void)
         break;
 #if ELEV_UART_ENABLED
     case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART:
-        HAL_UART_Init(&huart6);
+        // HAL_UART_Init(&huart6);
         break;
 #endif
     }
 }
 
+//! @brief Get the current rotation speed
+//!
+//! @return Current rotation speed in degrees per second (with base 10)
+
 int16_t getRotSpeedCV(void)
 {
-    uint16_t pidDisabled = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROG_CONFIG_BIT_PID_EN;
+    uint16_t pidDisabled = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BIT_PID_EN;
+    int16_t speed = 0;
     if (pidDisabled)
-        return (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
+        speed = (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_SPEED)];
     else
-        return (int16_t)PID_speed_rot.values.control_val;
+        speed = (int16_t)PID_speed_rot.values.control_val;
+
+    if (!(regInput[regInpIx(REG_INPUT_STATUS_WORD) & REG_INPUT_STATUS_WORD_BIT_ACTIVATED]))
+        speed = 0;
+
+    if (speed == 0)
+        return speed;
+
+    if (abs(speed) < regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)])
+        speed = (speed > 0) ? regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)] : -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)];
+    else if (abs(speed) > regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)])
+        speed = (speed > 0) ? regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)] : -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
+    return speed;
 }
+
+//! @brief Get the current elevator speed
+//!
+//! @return Current elevator speed in degrees per second (with base 10)
 
 int16_t getElevSpeedCV(void)
 {
     uint16_t pidDisabled = regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BIT_PID_EN;
+    int16_t speed = 0;
     if (pidDisabled)
-        return (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
+        speed = (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_SPEED)];
     else
-        return (int16_t)PID_speed_elev.values.control_val;
-}
+        speed = (int16_t)PID_speed_elev.values.control_val;
 
-void sendRotSpeedCV(void)
-{
-    int16_t speedCV = getRotSpeedCV();
-    if (speedCV > 0 && speedCV < regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)])
-        speedCV = regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)];
-    else if (speedCV < 0 && speedCV > -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)])
-        speedCV = -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MIN)];
-    else if (speedCV > regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)])
-        speedCV = regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-    else if (speedCV < -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)])
-        speedCV = -regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-
-    if (rotControlConfig == REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM)
-    {
-        uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, pwmDuty);
-        if (speedCV > 0)
-            HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_SET);
-        else if (speedCV < 0)
-            HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_RESET);
-    }
-
-    else if (rotControlConfig == REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART)
-    {
-        uint16_t uartSpeed = (uint32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-        uint8_t data[2] = {speedCV >> 8, speedCV & 0xFF};
-        HAL_UART_Transmit_IT(&huart2, data, sizeof(data));
-    }
-}
-
-void sendElevSpeedCV(void)
-{
-    int16_t speedCV = getElevSpeedCV();
     if (elevLimitMinReached || elevLimitMaxReached)
-    {
-        speedCV = 0; // Stop the elevator if limits are reached
-    }
-    else
-    {
-        if (speedCV > 0 && speedCV < regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
-            speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
-        else if (speedCV < 0 && speedCV > -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
-            speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
-        else if (speedCV > regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
-            speedCV = regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-        else if (speedCV < -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
-            speedCV = -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-    }
+        speed = 0;
 
-    if (elevControlConfig == REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM)
-    {
-        uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pwmDuty);
-        if (speedCV > 0)
-            HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_SET);
-        else if (speedCV < 0)
-            HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_RESET);
-    }
+    if (!(regInput[regInpIx(REG_INPUT_STATUS_WORD) & REG_INPUT_STATUS_WORD_BIT_ACTIVATED]))
+        speed = 0;
 
+    if (speed == 0)
+        return speed;
+    if (abs(speed) < regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)])
+        speed = (speed > 0) ? regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)] : -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MIN)];
+    else if (abs(speed) > regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)])
+        speed = (speed > 0) ? regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)] : -regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+    return speed;
+}
+
+void setRotSpeedPWM(int16_t speedCV)
+{
+    if (rotControlConfig != REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM)
+        return;
+
+    uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
+    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, pwmDuty);
+    if (speedCV > 0)
+        HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_SET);
+    else if (speedCV < 0)
+        HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_RESET);
+    USR_Printf_USBD_CDC("Rot\tSpeed: %d, Duty: %d%%, Dir: %c\r\n", speedCV, pwmDuty / 10, (speedCV > 0) ? 'F' : 'B');
+}
+
+void setElevSpeedPWM(int16_t speedCV)
+{
+    if (elevControlConfig != REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM)
+        return;
+
+    uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pwmDuty);
+    if (speedCV > 0)
+        HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_SET);
+    else if (speedCV < 0)
+        HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_RESET);
+    USR_Printf_USBD_CDC("Elev\tSpeed: %d, Duty: %d%%, Dir: %c\r\n", speedCV, pwmDuty / 10, (speedCV > 0) ? 'F' : 'B');
+}
+
+void setRotSpeedUART(int16_t speedCV)
+{
+    if (rotControlConfig != REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART)
+        return;
+
+    int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
+    HAL_UART_Transmit_IT(&huart2, (uint8_t *)&uartSpeed, 2);
+}
+
+void setElevSpeedUART(int16_t speedCV)
+{
 #if ELEV_UART_ENABLED
-    else if (elevControlConfig == REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART)
-    {
-        uint16_t uartSpeed = (uint32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-        uint8_t data[2] = {speedCV >> 8, speedCV & 0xFF};
-        HAL_UART_Transmit_IT(&huart6, data, sizeof(data));
-    }
+    if (elevControlConfig != REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART)
+        return;
+
+    int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
+    HAL_UART_Transmit_IT(&huart6, (uint8_t *)&uartSpeed, 2);
 #endif
 }
