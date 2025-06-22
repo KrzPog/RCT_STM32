@@ -3,11 +3,19 @@
 bool elevLimitMinReached = false;
 bool elevLimitMaxReached = false;
 
+bool Rot_UART_VESC_Enabled = false;
+
 uint16_t rotControlConfig = 0;
 uint16_t elevControlConfig = 0;
 
 int16_t speedCV_rot = 0;
 int16_t speedCV_elev = 0;
+
+UART_HandleTypeDef *rot_uart = NULL;
+UART_HandleTypeDef *elev_uart = NULL;
+
+static uint8_t rot_rx_char1;
+static uint8_t rot_rx_char2;
 
 void initRotSpeedControl(void)
 {
@@ -19,7 +27,12 @@ void initRotSpeedControl(void)
         HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
         break;
     case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART:
-        // HAL_UART_Init(&huart2);
+        Rot_UART_VESC_Enabled = true;
+        rot_uart = &huart2;
+        HAL_UART_Init(rot_uart);
+        bldc_interface_uart_init(rot_vesc_send_packet_rot);
+        HAL_UART_RegisterCallback(rot_uart, HAL_UART_RX_COMPLETE_CB_ID, rot_vesc_uart_rx_callback);
+        HAL_UART_Receive_IT(rot_uart, &rot_rx_char1, 1);
         break;
     }
 }
@@ -129,7 +142,7 @@ void setRotSpeedUART(int16_t speedCV)
         return;
 
     int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-    HAL_UART_Transmit_IT(&huart2, (uint8_t *)&uartSpeed, 2);
+    bldc_interface_set_rpm(uartSpeed);
 }
 
 void setElevSpeedUART(int16_t speedCV)
@@ -141,4 +154,19 @@ void setElevSpeedUART(int16_t speedCV)
     int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
     HAL_UART_Transmit_IT(&huart6, (uint8_t *)&uartSpeed, 2);
 #endif
+}
+
+void rot_vesc_send_packet_rot(unsigned char *data, unsigned int len)
+{
+    HAL_UART_Transmit_IT(rot_uart, data, len);
+}
+
+void rot_vesc_uart_rx_callback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == huart2.Instance)
+    {
+        rot_rx_char2 = rot_rx_char1;
+        bldc_interface_uart_process_byte(rot_rx_char2);
+        HAL_UART_Receive_IT(rot_uart, &rot_rx_char1, 1);
+    }
 }

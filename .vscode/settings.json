@@ -28,6 +28,8 @@
         "freertos.h": "c",
         "speedcontrol.h": "c",
         "pid.h": "c",
-        "usbd_cdc.h": "c"
-    }
+        "usbd_cdc.h": "c",
+        "bldc_interface_uart.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
 }

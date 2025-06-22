@@ -58,6 +58,8 @@ add_subdirectory(cmake/stm32cubemx)
 
 add_subdirectory(Middlewares/FreeMODBUS)
 
+add_subdirectory(Middlewares/VESC_UART_Interface)
+
 # Link directories setup
 target_link_directories(${EXECUTABLE_NAME} PRIVATE
     # Add user defined library search paths
@@ -82,6 +84,7 @@ target_sources(${EXECUTABLE_NAME} PRIVATE
 target_include_directories(${EXECUTABLE_NAME} PRIVATE
     # Add user defined include paths
     Middlewares/FreeMODBUS
+    Middlewares/VESC_UART_Interface
 )
 
 # Add project symbols (macros)
@@ -95,4 +98,5 @@ target_link_libraries(${EXECUTABLE_NAME}
 
     # Add user defined libraries
     FreeMODBUS
+    VESC_UART_Interface
 )
