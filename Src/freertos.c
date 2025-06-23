@@ -64,107 +64,107 @@
 /* Definitions for task_encodersUpdate */
 osThreadId_t task_encodersUpdateHandle;
 const osThreadAttr_t task_encodersUpdate_attributes = {
-  .name = "task_encodersUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh3,
+    .name = "task_encodersUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh3,
 };
 /* Definitions for task_stateLEDUpdate */
 osThreadId_t task_stateLEDUpdateHandle;
 const osThreadAttr_t task_stateLEDUpdate_attributes = {
-  .name = "task_stateLEDUpdate",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow7,
+    .name = "task_stateLEDUpdate",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow7,
 };
 /* Definitions for task_pollModbus */
 osThreadId_t task_pollModbusHandle;
 const osThreadAttr_t task_pollModbus_attributes = {
-  .name = "task_pollModbus",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal6,
+    .name = "task_pollModbus",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal6,
 };
 /* Definitions for task_checkIfTimeout */
 osThreadId_t task_checkIfTimeoutHandle;
 const osThreadAttr_t task_checkIfTimeout_attributes = {
-  .name = "task_checkIfTimeout",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow7,
+    .name = "task_checkIfTimeout",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow7,
 };
 /* Definitions for task_PID_Rot_Position */
 osThreadId_t task_PID_Rot_PositionHandle;
 const osThreadAttr_t task_PID_Rot_Position_attributes = {
-  .name = "task_PID_Rot_Position",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh6,
+    .name = "task_PID_Rot_Position",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh6,
 };
 /* Definitions for task_PID_Elev_Position */
 osThreadId_t task_PID_Elev_PositionHandle;
 const osThreadAttr_t task_PID_Elev_Position_attributes = {
-  .name = "task_PID_Elev_Position",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh6,
+    .name = "task_PID_Elev_Position",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh6,
 };
 /* Definitions for task_debugUSBPrint */
 osThreadId_t task_debugUSBPrintHandle;
 const osThreadAttr_t task_debugUSBPrint_attributes = {
-  .name = "task_debugUSBPrint",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal7,
+    .name = "task_debugUSBPrint",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityBelowNormal7,
 };
 /* Definitions for task_checkAccelValues */
 osThreadId_t task_checkAccelValuesHandle;
 const osThreadAttr_t task_checkAccelValues_attributes = {
-  .name = "task_checkAccelValues",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal7,
+    .name = "task_checkAccelValues",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal7,
 };
 /* Definitions for task_checkAnalogSensorsData */
 osThreadId_t task_checkAnalogSensorsDataHandle;
 const osThreadAttr_t task_checkAnalogSensorsData_attributes = {
-  .name = "task_checkAnalogSensorsData",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal7,
+    .name = "task_checkAnalogSensorsData",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityAboveNormal7,
 };
 /* Definitions for task_shootingTimeLimit */
 osThreadId_t task_shootingTimeLimitHandle;
 const osThreadAttr_t task_shootingTimeLimit_attributes = {
-  .name = "task_shootingTimeLimit",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh7,
+    .name = "task_shootingTimeLimit",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh7,
 };
 /* Definitions for task_PID_Rot_Speed */
 osThreadId_t task_PID_Rot_SpeedHandle;
 const osThreadAttr_t task_PID_Rot_Speed_attributes = {
-  .name = "task_PID_Rot_Speed",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh5,
+    .name = "task_PID_Rot_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh5,
 };
 /* Definitions for task_PID_Elev_Speed */
 osThreadId_t task_PID_Elev_SpeedHandle;
 const osThreadAttr_t task_PID_Elev_Speed_attributes = {
-  .name = "task_PID_Elev_Speed",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh5,
+    .name = "task_PID_Elev_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh5,
 };
 /* Definitions for task_send_Rot_Speed */
 osThreadId_t task_send_Rot_SpeedHandle;
 const osThreadAttr_t task_send_Rot_Speed_attributes = {
-  .name = "task_send_Rot_Speed",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh4,
+    .name = "task_send_Rot_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh4,
 };
 /* Definitions for task_send_Elev_Speed */
 osThreadId_t task_send_Elev_SpeedHandle;
 const osThreadAttr_t task_send_Elev_Speed_attributes = {
-  .name = "task_send_Elev_Speed",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh4,
+    .name = "task_send_Elev_Speed",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh4,
 };
 /* Definitions for task_VESC_RX_Timeout */
 osThreadId_t task_VESC_RX_TimeoutHandle;
 const osThreadAttr_t task_VESC_RX_Timeout_attributes = {
-  .name = "task_VESC_RX_Timeout",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow7,
+    .name = "task_VESC_RX_Timeout",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityLow7,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -192,11 +192,12 @@ extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -270,7 +271,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_taskInit_encodersUpdate */
@@ -599,10 +599,6 @@ void taskInit_send_Rot_Speed(void *argument)
       setRotSpeedUART(speedCV_rot);
       break;
 
-    case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM:
-      setRotSpeedPWM(speedCV_rot);
-      break;
-
     default:
       break;
     }
@@ -632,10 +628,6 @@ void taskInit_send_Elev_Speed(void *argument)
     speedCV_elev = getElevSpeedCV();
     switch (regFlash[regFlashIx(REG_FLASH_ELEV_CONFIG)] & REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL)
     {
-    case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART:
-      setElevSpeedUART(speedCV_elev);
-      break;
-
     case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM:
       setElevSpeedPWM(speedCV_elev);
       break;
@@ -678,4 +670,3 @@ void taskInit_VESC_RX_Timeout(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-

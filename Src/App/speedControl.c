@@ -22,10 +22,6 @@ void initRotSpeedControl(void)
     rotControlConfig = regFlash[regFlashIx(REG_FLASH_ROT_CONFIG)] & REG_FLASH_ROT_CONFIG_BITMASK_CONTROL;
     switch (rotControlConfig)
     {
-    case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM:
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
-        HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-        break;
     case REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_UART:
         Rot_UART_VESC_Enabled = true;
         rot_uart = &huart2;
@@ -44,13 +40,10 @@ void initElevSpeedControl(void)
     {
     case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM:
         __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
         HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+        HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
         break;
-#if ELEV_UART_ENABLED
-    case REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART:
-        // HAL_UART_Init(&huart6);
-        break;
-#endif
     }
 }
 
@@ -108,32 +101,41 @@ int16_t getElevSpeedCV(void)
     return speed;
 }
 
-void setRotSpeedPWM(int16_t speedCV)
-{
-    if (rotControlConfig != REG_FLASH_ROT_CONFIG_BITMASK_CONTROL_PWM)
-        return;
-
-    uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ROT_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
-    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, pwmDuty);
-    if (speedCV > 0)
-        HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_SET);
-    else if (speedCV < 0)
-        HAL_GPIO_WritePin(ROT_DIR_GPIO_Port, ROT_DIR_Pin, GPIO_PIN_RESET);
-    USR_Printf_USBD_CDC("Rot\tSpeed: %d, Duty: %d%%, Dir: %c\r\n", speedCV, pwmDuty / 10, (speedCV > 0) ? 'F' : 'B');
-}
-
 void setElevSpeedPWM(int16_t speedCV)
 {
     if (elevControlConfig != REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_PWM)
         return;
 
     uint16_t pwmDuty = (uint32_t)abs(speedCV) * regFlash[regFlashIx(REG_FLASH_ELEV_DUTY_PWM_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pwmDuty);
+    GPIO_PinState elev_L_EN = HAL_GPIO_ReadPin(ELEV_L_EN_GPIO_Port, ELEV_L_EN_Pin);
+    GPIO_PinState elev_R_EN = HAL_GPIO_ReadPin(ELEV_R_EN_GPIO_Port, ELEV_R_EN_Pin);
     if (speedCV > 0)
-        HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_SET);
+    {
+        HAL_GPIO_WritePin(ELEV_L_EN_GPIO_Port, ELEV_L_EN_Pin, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
+        if (elev_L_EN == GPIO_PIN_RESET) // Alreade reseted in previous call
+        {
+            HAL_GPIO_WritePin(ELEV_R_EN_GPIO_Port, ELEV_R_EN_Pin, GPIO_PIN_SET);
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, pwmDuty);
+        }
+    }
     else if (speedCV < 0)
-        HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_RESET);
-    USR_Printf_USBD_CDC("Elev\tSpeed: %d, Duty: %d%%, Dir: %c\r\n", speedCV, pwmDuty / 10, (speedCV > 0) ? 'F' : 'B');
+    {
+        HAL_GPIO_WritePin(ELEV_R_EN_GPIO_Port, ELEV_R_EN_Pin, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+        if (elev_R_EN == GPIO_PIN_RESET) // Alreade reseted in previous call
+        {
+            HAL_GPIO_WritePin(ELEV_L_EN_GPIO_Port, ELEV_L_EN_Pin, GPIO_PIN_SET);
+            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, pwmDuty);
+        }
+    }
+    else
+    {
+        HAL_GPIO_WritePin(ELEV_L_EN_GPIO_Port, ELEV_L_EN_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(ELEV_R_EN_GPIO_Port, ELEV_R_EN_Pin, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0);
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
+    }
 }
 
 void setRotSpeedUART(int16_t speedCV)
@@ -143,17 +145,6 @@ void setRotSpeedUART(int16_t speedCV)
 
     int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ROT_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ROT_SPEED_MAX)];
     bldc_interface_set_rpm(uartSpeed);
-}
-
-void setElevSpeedUART(int16_t speedCV)
-{
-#if ELEV_UART_ENABLED
-    if (elevControlConfig != REG_FLASH_ELEV_CONFIG_BITMASK_CONTROL_UART)
-        return;
-
-    int16_t uartSpeed = (int32_t)speedCV * regFlash[regFlashIx(REG_FLASH_ELEV_UART_SPEED_MAX)] / regFlash[regFlashIx(REG_FLASH_ELEV_SPEED_MAX)];
-    HAL_UART_Transmit_IT(&huart6, (uint8_t *)&uartSpeed, 2);
-#endif
 }
 
 void rot_vesc_send_packet_rot(unsigned char *data, unsigned int len)

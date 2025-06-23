@@ -54,10 +54,10 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BLACKPILL_LED_GPIO_Port, BLACKPILL_LED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, ROT_DIR_Pin|TURRET_LAMP_Pin|TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, ELEV_L_EN_Pin|TURRET_LAMP_Pin|TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(ELEV_DIR_GPIO_Port, ELEV_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(ELEV_R_EN_GPIO_Port, ELEV_R_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : BLACKPILL_LED_Pin */
   GPIO_InitStruct.Pin = BLACKPILL_LED_Pin;
@@ -72,19 +72,19 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(BLACKPILL_KEY_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ROT_DIR_Pin TURRET_LAMP_Pin TURRET_RELOAD_Pin TURRET_TRIGGER_Pin */
-  GPIO_InitStruct.Pin = ROT_DIR_Pin|TURRET_LAMP_Pin|TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin;
+  /*Configure GPIO pins : ELEV_L_EN_Pin TURRET_LAMP_Pin TURRET_RELOAD_Pin TURRET_TRIGGER_Pin */
+  GPIO_InitStruct.Pin = ELEV_L_EN_Pin|TURRET_LAMP_Pin|TURRET_RELOAD_Pin|TURRET_TRIGGER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : ELEV_DIR_Pin */
-  GPIO_InitStruct.Pin = ELEV_DIR_Pin;
+  /*Configure GPIO pin : ELEV_R_EN_Pin */
+  GPIO_InitStruct.Pin = ELEV_R_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(ELEV_DIR_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ELEV_R_EN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : DISABLE_SIGNAL_Pin */
   GPIO_InitStruct.Pin = DISABLE_SIGNAL_Pin;

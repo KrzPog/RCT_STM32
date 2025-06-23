@@ -27,11 +27,9 @@ void initElevSpeedControl(void);
 int16_t getRotSpeedCV(void);
 int16_t getElevSpeedCV(void);
 
-void setRotSpeedPWM(int16_t speedCV);
 void setElevSpeedPWM(int16_t speedCV);
 
 void setRotSpeedUART(int16_t speedCV);
-void setElevSpeedUART(int16_t speedCV);
 
 static void rot_vesc_send_packet_rot(unsigned char *data, unsigned int len);
 void rot_vesc_uart_rx_callback(UART_HandleTypeDef *huart);
