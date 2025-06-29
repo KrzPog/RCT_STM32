@@ -59,15 +59,15 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MODBUS_TIM_PRESCALER 95
 #define BLUETOOTH_USART_BPS 9600
+#define ELEV_R_PWM_PRESCALER 7
 #define ELEV_USART_BPS 9600
-#define ELEV_R_PWM_PRESCALER 3
-#define COMMS_BUFFER_SIZE 128
 #define ELEV_L_PWM_PERIOD 999
+#define ELEV_R_PWM_PERIOD 999
+#define COMMS_BUFFER_SIZE 128
 #define IWDG_RELOAD 999
 #define ROT_USART_BPS 115200
-#define ELEV_L_PWM_PRESCALER 3
 #define MODBUS_TIM_PERIOD 49
-#define ELEV_R_PWM_PERIOD 999
+#define ELEV_L_PWM_PRESCALER 7
 #define BLACKPILL_LED_Pin GPIO_PIN_13
 #define BLACKPILL_LED_GPIO_Port GPIOC
 #define BLACKPILL_KEY_Pin GPIO_PIN_0

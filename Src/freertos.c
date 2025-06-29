@@ -444,16 +444,8 @@ void taskInit_debugUSBPrint(void *argument)
   for (;;)
   {
     //!< @note Purpose of this task is to print debug information to USB CDC
-    // USR_Printf_USBD_CDC("\tRot [P:%5d V:%6d], Elev [P:%5d V:%6d]", (int16_t)regInput[regInpIx(REG_INPUT_ROT_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ROT_SPEED)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_POSITION)], (int16_t)regInput[regInpIx(REG_INPUT_ELEV_SPEED)]);
-    // osDelay(5 / portTICK_RATE_MS);
-    // USR_Printf_USBD_CDC("\tAccel [X:%6d Y:%6d Z:%6d], Gyro [X:%6d Y:%6d Z:%6d]", (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_X)], (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_Y)], (int16_t)regInput[regInpIx(REG_INPUT_ACCEL_Z)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_X)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_Y)], (int16_t)regInput[regInpIx(REG_INPUT_GYRO_Z)]);
-    // osDelay(5 / portTICK_RATE_MS);
-    // USR_Printf_USBD_CDC("\tBattery_V:%5d, Trigg_I:%5d, Reload_I:%5d, Lamp_I:%5d\r\n", (uint16_t)regInput[regInpIx(REG_INPUT_BATTERY_VOLTAGE)], (uint16_t)regInput[regInpIx(REG_INPUT_TRIGGER_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_RELOAD_CURRENT)], (uint16_t)regInput[regInpIx(REG_INPUT_LAMP_CURRENT)]);
-    // osDelay(90 / portTICK_RATE_MS);
-    // USR_Printf_USBD_CDC(">SP:%d,PV:%d,CV:%d\r\n",
-    //                     PID_position_rot.values.setpoint,
-    //                     PID_position_rot.values.current_val,
-    //                     PID_position_rot.values.control_val);
+    USR_Printf_USBD_CDC("\tRot:%d,Elev:%d/r/n", (int16_t)regHolding[regHoldIx(REG_HOLDING_ROT_TARGET_POSITION)],
+                        (int16_t)regHolding[regHoldIx(REG_HOLDING_ELEV_TARGET_POSITION)]);
     osDelay(90 / portTICK_RATE_MS);
   }
   /* USER CODE END taskInit_debugUSBPrint */
